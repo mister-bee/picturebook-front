@@ -6,6 +6,7 @@ import './App.css';
 
 function App() {
   const [input, setInput] = useState(null)
+
   const [responseAI, setResponseAI] = useState(null)
   const { register, errors, handleSubmit, watch } = useForm({});
 
