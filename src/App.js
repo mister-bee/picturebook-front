@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from 'semantic-ui-react'
 import axios from 'axios'
@@ -6,7 +6,8 @@ import './App.css';
 
 function App() {
   const [input, setInput] = useState(null)
-
+  const [error, setError] = useState(null)
+  //
   const [responseAI, setResponseAI] = useState(null)
   const { register, errors, handleSubmit, watch } = useForm({});
 
@@ -23,11 +24,13 @@ function App() {
       .then(response => setResponseAI({ text: response.data }))
       .catch(error => {
         console.error('There was an error 🤬', error);
+        setError(error.message)
       });
   };
 
 
   console.log("responseAI ===>>>", responseAI)
+  console.log("error ===>>>", error)
 
   return (
     <div className="App">
@@ -37,6 +40,7 @@ function App() {
 
       <body>
         <br />
+        {error ? <h2>{JSON.stringify(error)}</h2> : <h2>All good</h2>}
         <h2>Type your question below:</h2>
         <form onSubmit={e => e.preventDefault()}>
           <textarea
@@ -52,7 +56,7 @@ function App() {
               size="huge"
               type="submit"
               inverted color='blue'
-            >Ask JeepyTee
+            >ASK GEEPS!
             </Button>
 
             {responseAI && <> <h2>{responseAI?.text}</h2><Button color="green">Keeper</Button> <Button color="yellow">Toss it!</Button>  </>}
@@ -60,6 +64,8 @@ function App() {
             <br />
             <br />
           </div>
+
+
         </form>
       </body>
     </div>
