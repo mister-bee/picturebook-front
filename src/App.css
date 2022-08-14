@@ -37,3 +37,9 @@
     transform: rotate(360deg);
   }
 }
+
+h6 {
+  color: blue;
+  font-size: "2em";
+  margin: "0px"
+}
