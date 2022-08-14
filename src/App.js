@@ -4,49 +4,86 @@ import { Button } from 'semantic-ui-react'
 import axios from 'axios'
 import './App.css';
 import { ToastContainer, toast } from 'react-toastify';
-
 import { v4 as uuidv4 } from 'uuid'
-
+import moment from 'moment'
 import 'react-toastify/dist/ReactToastify.css';
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 function App() {
-  const [progressInput, setProgressInput] = useState([])
   const [responseAI, setResponseAI] = useState(null)
-  const { register, errors, handleSubmit, watch } = useForm({});
+  const [progressInput, setProgressInput] = useState([])
+  const [promptUsed, setPromptUsed] = useState(null)
+  const { register, handleSubmit, reset } = useForm({}); // errors
   const notify = (message) => toast(message);
 
 
   const onSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
     const { userRequest } = formInput
-    // console.log("userRequest", userRequest)
     const openAiRequest = { userRequest: userRequest };
+    setPromptUsed(userRequest)
+
     axios.post(baseUrl + "openai", openAiRequest)
       .then(response => setResponseAI(response.data))
       .catch(error => {
-        // console.error('There was an error 🤬', error?.message);
         notify("🙄 " + error?.message)
       });
   };
 
   const keeper = () => {
     const newItem = {
+      prompt: promptUsed,
       text: responseAI,
       meta: "",
       id: uuidv4()
     }
-    console.log("newItem", newItem)
+
     const newProgressiveInput = [...progressInput]
     newProgressiveInput.push(newItem)
-
-    // console.log(responseAI)
     setProgressInput(newProgressiveInput)
-    // add tuple to array [text, meta]
+    setResponseAI(null)
+    reset()
   }
 
-  const progressInputDisplay = progressInput && progressInput.map(item => <h6>{item.text}</h6>)
 
-  console.log("progressInput ===>>>", progressInput)
+  const tossIt = () => {
+
+    setResponseAI(null)
+    reset()
+  }
+
+  const deleteItem = (item) => {
+    console.log(item)
+  }
+
+  const makePDF = () => {
+
+    const printableInput = progressInput.map(item => "PROMPT: " + item.prompt + "\nRESPONSE: " + item.text + "\n\n")
+
+    const docDefinition = {
+
+      content: [
+        { text: "The Geeps Super Knowlegde Machine Results: ", bold: true },
+        { text: moment().format('MMMM Do YYYY, h:mm:ss a') },
+        { text: "  ", fontSize: 10 },
+        { text: printableInput, fontSize: 10, bold: true },
+        { text: "  ", fontSize: 10 }]
+    }
+
+    pdfMake.createPdf(docDefinition).open(); // .download();
+
+  }
+
+  const progressInputDisplay = progressInput && progressInput.map(item => {
+    return (
+      <h3 style={{ margin: "5px", color: "blue", cursor: "pointer" }}
+        onClick={() => deleteItem(item)}>
+        {item.text}
+      </h3>)
+  })
+
 
   return (
     <div className="App">
@@ -79,14 +116,16 @@ function App() {
               <>
                 <h2>{responseAI}</h2>
                 <Button onClick={keeper} color="green">Keeper</Button>
-                <Button color="yellow">Toss it!</Button>
+                <Button onClick={tossIt} color="yellow">Toss it!</Button>
               </>
             }
             <br />
 
-            {progressInput && progressInputDisplay}
-
-
+            {progressInput &&
+              <>
+                {progressInputDisplay}
+                <Button onClick={makePDF} inverted color="green">Save PDF</Button>
+              </>}
 
             <br />
             <br />
