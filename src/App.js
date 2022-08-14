@@ -1,19 +1,21 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Button } from 'semantic-ui-react'
+import { Button, Container } from 'semantic-ui-react'
 import axios from 'axios'
 import './App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
 import moment from 'moment'
 import 'react-toastify/dist/ReactToastify.css';
+import downloadPdf from './images/download-pdf.svg';
+import robot from './images/smile.svg';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 function App() {
   const [responseAI, setResponseAI] = useState(null)
-  const [progressInput, setProgressInput] = useState([])
+  const [progressInput, setProgressInput] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
   const { register, handleSubmit, reset } = useForm({}); // errors
   const notify = (message) => toast(message);
@@ -40,7 +42,7 @@ function App() {
       id: uuidv4()
     }
 
-    const newProgressiveInput = [...progressInput]
+    const newProgressiveInput = progressInput ? [...progressInput] : []
     newProgressiveInput.push(newItem)
     setProgressInput(newProgressiveInput)
     setResponseAI(null)
@@ -60,14 +62,13 @@ function App() {
 
   const makePDF = () => {
 
-    const printableInput = progressInput.map(item => "PROMPT: " + item.prompt + "\nRESPONSE: " + item.text + "\n\n")
+    const printableInput = progressInput.map(item => "PROMPT: " + item.prompt + "\nRESPONSE:" + item.text + "\n\n")
 
     const docDefinition = {
-
       content: [
-        { text: "The Geeps Super Knowlegde Machine Results: ", bold: true },
+        { text: "The Geeps Super Knowledge Machine Results: ", bold: true },
         { text: moment().format('MMMM Do YYYY, h:mm:ss a') },
-        { text: "  ", fontSize: 10 },
+        { text: "\n", fontSize: 10 },
         { text: printableInput, fontSize: 10, bold: true },
         { text: "  ", fontSize: 10 }]
     }
@@ -89,12 +90,11 @@ function App() {
     <div className="App">
       <ToastContainer />
       <header className="App-header">
-        <h1>The Super Knowledge Machine</h1>
-        <p>Get Design from OpenAi</p>
+        <h1 style={{ margin: "2px" }}>The Super Knowledge Machine</h1>
       </header>
-
       <body>
         <br />
+        <img src={robot} height="100" alt="robot" />
         <h2>Type your question below:</h2>
         <form onSubmit={e => e.preventDefault()}>
           <textarea
@@ -111,7 +111,7 @@ function App() {
               inverted color='blue'
             >Ask GeepyTee
             </Button>
-
+            <br />
             {responseAI &&
               <>
                 <h2>{responseAI}</h2>
@@ -121,11 +121,13 @@ function App() {
             }
             <br />
 
-            {progressInput &&
-              <>
+            {progressInput?.length > 0 &&
+              <Container>
                 {progressInputDisplay}
-                <Button onClick={makePDF} inverted color="green">Save PDF</Button>
-              </>}
+                <br />
+                <img src={downloadPdf} height="30" alt="React Logo" onClick={makePDF} />
+
+              </Container>}
 
             <br />
             <br />
