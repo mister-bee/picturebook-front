@@ -85,7 +85,7 @@ function App() {
         { text: "  ", fontSize: 10 }]
     }
 
-    pdfMake.createPdf(docDefinition).open(); // .download();
+    pdfMake.createPdf(docDefinition).download("Geeps_Results.pdf");
 
   }
 
@@ -183,7 +183,7 @@ function App() {
 
                 </div>
                 <br />
-                <img src={downloadPdf} height="30" alt="React Logo" onClick={makePDF} />
+                <img src={downloadPdf} height="30" alt="pdf-icon" onClick={makePDF} />
 
               </div>
               <br />
