@@ -17,6 +17,7 @@ function App() {
   const [responseAI, setResponseAI] = useState(null)
   const [progressInput, setProgressInput] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
+
   const { register, handleSubmit, reset } = useForm({}); // errors
   const notify = (message) => toast(message);
 
@@ -28,7 +29,9 @@ function App() {
     setPromptUsed(userRequest)
 
     axios.post(baseUrl + "openai", openAiRequest)
-      .then(response => setResponseAI(response.data))
+      .then(response => {
+        setResponseAI(response.data)
+      })
       .catch(error => {
         notify("🙄 " + error?.message)
       });
@@ -46,12 +49,11 @@ function App() {
     newProgressiveInput.push(newItem)
     setProgressInput(newProgressiveInput)
     setResponseAI(null)
-    reset()
   }
 
 
-  const tossIt = () => {
 
+  const clearEntry = () => {
     setResponseAI(null)
     reset()
   }
@@ -102,40 +104,42 @@ function App() {
             placeholder="GPT-3 question..."
             rows="8" cols="80"
             {...register('userRequest', { required: true, maxLength: 1000 })} />
-          <div>
-            <br />
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              size="huge"
-              type="submit"
-              inverted color='blue'
-            >Ask GeepyTee
-            </Button>
-            <br />
-            {responseAI &&
-              <>
-                <h2>{responseAI}</h2>
-                <Button onClick={keeper} color="green">Keeper</Button>
-                <Button onClick={tossIt} color="yellow">Toss it!</Button>
-              </>
-            }
-            <br />
 
-            {progressInput?.length > 0 &&
-              <Container>
-                {progressInputDisplay}
-                <br />
-                <img src={downloadPdf} height="30" alt="React Logo" onClick={makePDF} />
+          <br />
 
-              </Container>}
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            size="huge"
+            type="submit"
+            inverted color='blue'>Ask GeepyTee
+          </Button>
 
-            <br />
-            <br />
-            <br />
-          </div>
+
+          <br />
+          {responseAI &&
+            <>
+              <h2>{responseAI}</h2>
+              <Button onClick={keeper} color="green">Keeper</Button>
+              <Button onClick={clearEntry} color="yellow">Clear Entry</Button>
+            </>
+          }
+          <br />
+
+          {progressInput?.length > 0 &&
+            <Container>
+              {progressInputDisplay}
+              <br />
+              <img src={downloadPdf} height="30" alt="React Logo" onClick={makePDF} />
+
+            </Container>}
+
+          <br />
+          <br />
+          <br />
+
         </form>
       </body>
-    </div>
+    </div >
   );
 }
 
