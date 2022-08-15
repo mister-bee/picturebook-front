@@ -6,9 +6,11 @@ import './App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
 import moment from 'moment'
+import Lottie from "lottie-react";
 import 'react-toastify/dist/ReactToastify.css';
 import downloadPdf from './images/download-pdf.svg';
 import robot from './images/smile.svg';
+import loadingAnimation from './images/loading-animation.json';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -17,6 +19,7 @@ function App() {
   const [responseAI, setResponseAI] = useState(null)
   const [progressInput, setProgressInput] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { register, handleSubmit, reset } = useForm({}); // errors
   const notify = (message) => toast(message);
@@ -27,12 +30,16 @@ function App() {
     const { userRequest } = formInput
     const openAiRequest = { userRequest: userRequest };
     setPromptUsed(userRequest)
+    setIsLoading(true)
 
     axios.post(baseUrl + "openai", openAiRequest)
       .then(response => {
         setResponseAI(response.data)
+        setIsLoading(false)
+
       })
       .catch(error => {
+        setIsLoading(false)
         notify("🙄 " + error?.message)
       });
   };
@@ -59,7 +66,10 @@ function App() {
   }
 
   const deleteItem = (item) => {
-    console.log(item)
+    const newProgressiveInput = [...progressInput]
+    const filteredInput = newProgressiveInput.filter(i => i.id !== item.id)
+    setProgressInput(filteredInput)
+    //console.log(item)
   }
 
   const makePDF = () => {
@@ -81,11 +91,20 @@ function App() {
 
   const progressInputDisplay = progressInput && progressInput.map(item => {
     return (
-      <h3 style={{ margin: "5px", color: "blue", cursor: "pointer" }}
-        onClick={() => deleteItem(item)}>
-        {item.text}
-      </h3>)
+      <h3 style={{ margin: "5px", color: "grey", cursor: "pointer" }}>     {item.text}
+
+        <span
+          onClick={() => deleteItem(item)}
+          style={{ cursor: "pointer" }}> ❌
+        </span>
+
+      </h3>
+    )
   })
+
+  const style = {
+    height: 100,
+  };
 
 
   return (
@@ -107,31 +126,72 @@ function App() {
 
           <br />
 
-          <Button
-            onClick={handleSubmit(onSubmit)}
-            size="huge"
-            type="submit"
-            inverted color='blue'>Ask GeepyTee
-          </Button>
-
+          {isLoading ?
+            <Lottie animationData={loadingAnimation} loop={true} style={style} />
+            : <Button
+              onClick={handleSubmit(onSubmit)}
+              size="huge"
+              type="submit"
+              inverted color='blue'>Ask Geeps!
+            </Button>
+          }
 
           <br />
           {responseAI &&
             <>
-              <h2>{responseAI}</h2>
+              <Container text>
+                <h2>{responseAI}</h2>
+                <br />
+              </Container>
+
+
               <Button onClick={keeper} color="green">Keeper</Button>
               <Button onClick={clearEntry} color="yellow">Clear Entry</Button>
+              <br />
             </>
           }
+
+          <br />
           <br />
 
           {progressInput?.length > 0 &&
-            <Container>
-              {progressInputDisplay}
-              <br />
-              <img src={downloadPdf} height="30" alt="React Logo" onClick={makePDF} />
+            <>
+              <div
 
-            </Container>}
+                style={{
+                  width: "60%",
+                  height: "auto",
+                  margin: "0 auto",
+                  position: "relative"
+                  // justifyContent: "center"
+                  // alignItems: "center"
+                }}
+
+              >
+                <div
+
+                  style={{
+                    textAlign: "left",
+                    width: "100%",
+                    borderStyle: "solid",
+                    borderWidth: "1px",
+                    borderColor: "black"
+                  }}
+                >
+                  <h2 style={{ color: "grey", textAlign: "center" }}>All the Keepers:</h2>
+                  {progressInputDisplay}
+
+                </div>
+                <br />
+                <img src={downloadPdf} height="30" alt="React Logo" onClick={makePDF} />
+
+              </div>
+              <br />
+
+
+            </>
+
+          }
 
           <br />
           <br />
