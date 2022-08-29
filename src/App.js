@@ -19,6 +19,7 @@ function App() {
   const [responseAI, setResponseAI] = useState(null)
   const [progressInput, setProgressInput] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
+  const [tempUsed, setTempUsed] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const { register, handleSubmit, reset } = useForm({}); // errors
@@ -27,9 +28,14 @@ function App() {
 
   const onSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
-    const { userRequest } = formInput
-    const openAiRequest = { userRequest: userRequest };
+    const { userRequest, temperature } = formInput
+
+
+    const openAiRequest = { userRequest, temperature: parseFloat(temperature) };
+
     setPromptUsed(userRequest)
+    setTempUsed(parseFloat(temperature))
+
     setIsLoading(true)
 
     axios.post(baseUrl + "openai", openAiRequest)
@@ -47,6 +53,7 @@ function App() {
   const keeper = () => {
     const newItem = {
       prompt: promptUsed,
+      temperature: tempUsed,
       text: responseAI,
       meta: "",
       id: uuidv4()
@@ -69,12 +76,10 @@ function App() {
     const newProgressiveInput = [...progressInput]
     const filteredInput = newProgressiveInput.filter(i => i.id !== item.id)
     setProgressInput(filteredInput)
-    //console.log(item)
   }
 
   const makePDF = () => {
-
-    const printableInput = progressInput.map(item => "PROMPT: " + item.prompt + "\nRESPONSE:" + item.text + "\n\n")
+    const printableInput = progressInput.map(item => "PROMPT: " + item.prompt + "\nTEMPERATURE: " + item.temperature + "\nRESPONSE:" + item.text + "\n\n")
 
     const docDefinition = {
       content: [
@@ -85,27 +90,21 @@ function App() {
         { text: "  ", fontSize: 10 }]
     }
 
-    pdfMake.createPdf(docDefinition).download("Geeps_Results.pdf");
+    pdfMake.createPdf(docDefinition).download("Geeps_Keeper.pdf").open();
 
   }
 
   const progressInputDisplay = progressInput && progressInput.map(item => {
     return (
       <h3 style={{ margin: "5px", color: "grey", cursor: "pointer" }}>     {item.text}
-
         <span
           onClick={() => deleteItem(item)}
           style={{ cursor: "pointer" }}> ❌
         </span>
-
-      </h3>
-    )
+      </h3>)
   })
 
-  const style = {
-    height: 100,
-  };
-
+  const style = { height: 100 };
 
   return (
     <div className="App">
@@ -123,6 +122,36 @@ function App() {
             placeholder="GPT-3 question..."
             rows="8" cols="80"
             {...register('userRequest', { required: true, maxLength: 1000 })} />
+
+          <div>
+            <br />
+            <div>
+              <label>Enter the 'temperature' between 0 and 1. The closer to 1 the more chances the AI will take.</label>
+            </div>
+            <input
+              label="Temperature"
+              type="number"
+              step={.01}
+              name="temperature"
+              min="0" max="1"
+
+              {...register('temperature', { required: true })} />
+          </div>
+
+          <div>
+            <br />
+            <div>
+              <label>Enter max tokens. Default is 200.</label>
+            </div>
+            <input
+              label="Max_tokens"
+              type="number"
+              step={10}
+              name="max_tokens"
+              min="100" max="500"
+
+              {...register('max_tokens', { required: true })} />
+          </div>
 
           <br />
 
@@ -144,7 +173,6 @@ function App() {
                 <br />
               </Container>
 
-
               <Button onClick={keeper} color="green">Keeper</Button>
               <Button onClick={clearEntry} color="yellow">Clear Entry</Button>
               <br />
@@ -157,7 +185,6 @@ function App() {
           {progressInput?.length > 0 &&
             <>
               <div
-
                 style={{
                   width: "60%",
                   height: "auto",
@@ -165,32 +192,27 @@ function App() {
                   position: "relative"
                   // justifyContent: "center"
                   // alignItems: "center"
-                }}
+                }}>
 
-              >
                 <div
-
                   style={{
                     textAlign: "left",
                     width: "100%",
                     borderStyle: "solid",
                     borderWidth: "1px",
                     borderColor: "black"
-                  }}
-                >
+                  }}>
+
                   <h2 style={{ color: "grey", textAlign: "center" }}>All the Keepers:</h2>
                   {progressInputDisplay}
 
                 </div>
                 <br />
-                <img src={downloadPdf} height="30" alt="pdf-icon" onClick={makePDF} />
+                <img src={downloadPdf} height="30" alt="React Logo" onClick={makePDF} />
 
               </div>
               <br />
-
-
             </>
-
           }
 
           <br />
