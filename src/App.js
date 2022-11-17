@@ -110,7 +110,7 @@ function App() {
     <div className="App">
       <ToastContainer />
       <header className="App-header">
-        <h1 style={{ margin: "2px" }}>The Super Knowledge Machine</h1>
+        <h1 style={{ margin: "2px" }}>Picture Book</h1>
       </header>
       <body>
         <br />
