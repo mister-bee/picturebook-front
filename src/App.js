@@ -9,8 +9,10 @@ import moment from 'moment'
 import Lottie from "lottie-react";
 import 'react-toastify/dist/ReactToastify.css';
 import downloadPdf from './images/download-pdf.svg';
-import robot from './images/smile.svg';
+//import robot from './images/smile.svg';
 import loadingAnimation from './images/loading-animation.json';
+import robot1 from './images/67532-artificial-intelligence-robot.json';
+import robot2 from './images/99973-little-power-robot.json';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -104,7 +106,7 @@ function App() {
       </h3>)
   })
 
-  const style = { height: 100 };
+  const style = { height: 300 };
 
   return (
     <div className="App">
@@ -114,8 +116,8 @@ function App() {
       </header>
       <body>
         <br />
-        <img src={robot} height="100" alt="robot" />
-        <h2>Type your question below:</h2>
+        <Lottie animationData={robot2} loop={true} style={style} />
+        <h2>Write a story about...</h2>
         <form onSubmit={e => e.preventDefault()}>
           <textarea
             type="text"
@@ -149,7 +151,6 @@ function App() {
               step={10}
               name="max_tokens"
               min="100" max="500"
-
               {...register('max_tokens', { required: true })} />
           </div>
 
