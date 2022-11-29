@@ -37,7 +37,6 @@ function App() {
 
     setPromptUsed(userRequest)
     setTempUsed(parseFloat(temperature))
-
     setIsLoading(true)
 
     axios.post(baseUrl + "openai", openAiRequest)
@@ -108,6 +107,8 @@ function App() {
 
   const style = { height: 300 };
 
+  console.log("=====>>>> responseAI", responseAI)
+
   return (
     <div className="App">
       <ToastContainer />
@@ -136,7 +137,6 @@ function App() {
               step={.01}
               name="temperature"
               min="0" max="1"
-
               {...register('temperature', { required: true })} />
           </div>
 
@@ -170,7 +170,7 @@ function App() {
           {responseAI &&
             <>
               <Container text>
-                <h2>{responseAI}</h2>
+                {/* <h2>{responseAI}</h2> */}
                 <br />
               </Container>
 
