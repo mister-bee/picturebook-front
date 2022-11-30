@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button, Container } from 'semantic-ui-react'
 import axios from 'axios'
@@ -19,6 +19,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 function App() {
   const [responseAI, setResponseAI] = useState(null)
+
   const [progressInput, setProgressInput] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
   const [tempUsed, setTempUsed] = useState(null)
@@ -26,6 +27,10 @@ function App() {
 
   const { register, handleSubmit, reset } = useForm({}); // errors
   const notify = (message) => toast(message);
+
+  useEffect(() => {
+    console.log("responseAI updated", responseAI)
+  }, [responseAI])
 
 
   const onSubmit = formInput => {
@@ -42,6 +47,7 @@ function App() {
     axios.post(baseUrl + "openai", openAiRequest)
       .then(response => {
         setResponseAI(response.data)
+        //console.log("response.data===>", response.data)
         setIsLoading(false)
 
       })
@@ -65,7 +71,6 @@ function App() {
     setProgressInput(newProgressiveInput)
     setResponseAI(null)
   }
-
 
 
   const clearEntry = () => {
@@ -169,8 +174,14 @@ function App() {
           <br />
           {responseAI &&
             <>
+              {responseAI && responseAI[1] ?
+                <div>
+                  <img src={responseAI[1]} alt="BigCo Inc. logo" width="350px" height="350px" />
+                </div> :
+                null}
+
               <Container text>
-                {/* <h2>{responseAI}</h2> */}
+                <h2>{responseAI[2]}</h2>
                 <br />
               </Container>
 
@@ -227,3 +238,7 @@ function App() {
 }
 
 export default App;
+
+// One prompt generated three stories
+// filter innuendo and generally dark themes
+// pic the best of the three and then click make a picture!
