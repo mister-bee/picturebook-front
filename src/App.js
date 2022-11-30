@@ -5,7 +5,7 @@ import axios from 'axios'
 import './App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
-import moment from 'moment'
+
 import Lottie from "lottie-react";
 import 'react-toastify/dist/ReactToastify.css';
 import downloadPdf from './images/download-pdf.svg';
@@ -13,13 +13,15 @@ import downloadPdf from './images/download-pdf.svg';
 import loadingAnimation from './images/loading-animation.json';
 import robot1 from './images/67532-artificial-intelligence-robot.json';
 import robot2 from './images/99973-little-power-robot.json';
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import makePDF from './makePDF';
+import SavedStories from './components/SavedStories';
+// import pdfMake from "pdfmake/build/pdfmake";
+// import pdfFonts from "pdfmake/build/vfs_fonts";
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 
 function App() {
   const [responseAI, setResponseAI] = useState(null)
-
   const [progressInput, setProgressInput] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
   const [tempUsed, setTempUsed] = useState(null)
@@ -28,16 +30,14 @@ function App() {
   const { register, handleSubmit, reset } = useForm({}); // errors
   const notify = (message) => toast(message);
 
-  useEffect(() => {
-    console.log("responseAI updated", responseAI)
-  }, [responseAI])
+  // useEffect(() => {
+  //   console.log("responseAI updated", responseAI)
+  // }, [responseAI])
 
 
   const onSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
     const { userRequest, temperature } = formInput
-
-
     const openAiRequest = { userRequest, temperature: parseFloat(temperature) };
 
     setPromptUsed(userRequest)
@@ -47,9 +47,7 @@ function App() {
     axios.post(baseUrl + "openai", openAiRequest)
       .then(response => {
         setResponseAI(response.data)
-        //console.log("response.data===>", response.data)
         setIsLoading(false)
-
       })
       .catch(error => {
         setIsLoading(false)
@@ -61,8 +59,9 @@ function App() {
     const newItem = {
       prompt: promptUsed,
       temperature: tempUsed,
-      text: responseAI,
-      meta: "",
+      image: responseAI[1],
+      text: responseAI[2],
+      meta: "meta data tbd",
       id: uuidv4()
     }
 
@@ -84,40 +83,41 @@ function App() {
     setProgressInput(filteredInput)
   }
 
-  const makePDF = () => {
-    const printableInput = progressInput.map(item => "PROMPT: " + item.prompt + "\nTEMPERATURE: " + item.temperature + "\nRESPONSE:" + item.text + "\n\n")
+  // const makePDF = () => {
+  //   const printableInput = progressInput.map(item => "PROMPT: " + item.prompt + "\nTEMPERATURE: " + item.temperature + "\nRESPONSE:" + item.text + "\n\n")
 
-    const docDefinition = {
-      content: [
-        { text: "The Geeps Super Knowledge Machine Results: ", bold: true },
-        { text: moment().format('MMMM Do YYYY, h:mm:ss a') },
-        { text: "\n", fontSize: 10 },
-        { text: printableInput, fontSize: 10, bold: true },
-        { text: "  ", fontSize: 10 }]
-    }
+  //   const docDefinition = {
+  //     content: [
+  //       { text: "The Geeps Super Knowledge Machine Results: ", bold: true },
+  //       { text: moment().format('MMMM Do YYYY, h:mm:ss a') },
+  //       { text: "\n", fontSize: 10 },
+  //       { text: printableInput, fontSize: 10, bold: true },
+  //       { text: "  ", fontSize: 10 }]
+  //   }
 
-    pdfMake.createPdf(docDefinition).download("Geeps_Keeper.pdf").open();
+  //   pdfMake.createPdf(docDefinition).download("Geeps_Keeper.pdf").open();
 
-  }
+  // }
 
   const progressInputDisplay = progressInput && progressInput.map(item => {
-    return (
+    // console.log("item", item)
+    return (<>
+      <img src={item?.image} alt="ai_image" width="50px" height="50px" />
       <h3 style={{ margin: "5px", color: "grey", cursor: "pointer" }}>     {item.text}
         <span
           onClick={() => deleteItem(item)}
           style={{ cursor: "pointer" }}> ❌
         </span>
-      </h3>)
+      </h3></>)
   })
 
   const style = { height: 300 };
-
-  console.log("=====>>>> responseAI", responseAI)
 
   return (
     <div className="App">
       <ToastContainer />
       <header className="App-header">
+        <SavedStories />
         <h1 style={{ margin: "2px" }}>Picture Book</h1>
       </header>
       <body>
@@ -176,7 +176,7 @@ function App() {
             <>
               {responseAI && responseAI[1] ?
                 <div>
-                  <img src={responseAI[1]} alt="BigCo Inc. logo" width="350px" height="350px" />
+                  <img src={responseAI[1]} alt="ai_image" width="350px" height="350px" />
                 </div> :
                 null}
 
@@ -220,7 +220,7 @@ function App() {
 
                 </div>
                 <br />
-                <img src={downloadPdf} height="30" alt="React Logo" onClick={makePDF} />
+                <img src={downloadPdf} height="30" alt="pdf_button" onClick={() => makePDF(progressInputDisplay)} />
 
               </div>
               <br />
@@ -239,6 +239,3 @@ function App() {
 
 export default App;
 
-// One prompt generated three stories
-// filter innuendo and generally dark themes
-// pic the best of the three and then click make a picture!
