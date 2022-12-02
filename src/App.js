@@ -1,39 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button, Container } from 'semantic-ui-react'
 import axios from 'axios'
 import './App.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
-
 import Lottie from "lottie-react";
 import 'react-toastify/dist/ReactToastify.css';
-import downloadPdf from './images/download-pdf.svg';
-//import robot from './images/smile.svg';
 import loadingAnimation from './images/loading-animation.json';
-import robot1 from './images/67532-artificial-intelligence-robot.json';
-import robot2 from './images/99973-little-power-robot.json';
-import makePDF from './makePDF';
-import SavedStories from './components/SavedStories';
-// import pdfMake from "pdfmake/build/pdfmake";
-// import pdfFonts from "pdfmake/build/vfs_fonts";
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
+import animatedRobot from './images/99973-little-power-robot.json';
+import SavedStoriesDisplay from './components/SavedStoriesDisplay';
+import StoryDisplay from './components/StoryDisplay';
 
 function App() {
   const [responseAI, setResponseAI] = useState(null)
-  const [progressInput, setProgressInput] = useState(null)
+  const [currentStoryCollection, setCurrentStoryCollection] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
-  const [tempUsed, setTempUsed] = useState(null)
+  const [temperature, setTemperature] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-
   const { register, handleSubmit, reset } = useForm({}); // errors
   const notify = (message) => toast(message);
-
-  // useEffect(() => {
-  //   console.log("responseAI updated", responseAI)
-  // }, [responseAI])
-
 
   const onSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
@@ -41,7 +27,7 @@ function App() {
     const openAiRequest = { userRequest, temperature: parseFloat(temperature) };
 
     setPromptUsed(userRequest)
-    setTempUsed(parseFloat(temperature))
+    setTemperature(parseFloat(temperature))
     setIsLoading(true)
 
     axios.post(baseUrl + "openai", openAiRequest)
@@ -58,71 +44,45 @@ function App() {
   const keeper = () => {
     const newItem = {
       prompt: promptUsed,
-      temperature: tempUsed,
+      temperature,
       image: responseAI[1],
       text: responseAI[2],
       meta: "meta data tbd",
       id: uuidv4()
     }
 
-    const newProgressiveInput = progressInput ? [...progressInput] : []
-    newProgressiveInput.push(newItem)
-    setProgressInput(newProgressiveInput)
+    const updatedStoryCollection = currentStoryCollection ? [...currentStoryCollection] : []
+    updatedStoryCollection.push(newItem)
+    setCurrentStoryCollection(updatedStoryCollection)
     setResponseAI(null)
   }
-
 
   const clearEntry = () => {
     setResponseAI(null)
     reset()
   }
 
+  const robotStyle = { height: 200 };
+
   const deleteItem = (item) => {
-    const newProgressiveInput = [...progressInput]
-    const filteredInput = newProgressiveInput.filter(i => i.id !== item.id)
-    setProgressInput(filteredInput)
+    const storyCollection = [...currentStoryCollection]
+    const filteredInput = storyCollection.filter(i => i.id !== item.id)
+    setCurrentStoryCollection(filteredInput)
   }
-
-  // const makePDF = () => {
-  //   const printableInput = progressInput.map(item => "PROMPT: " + item.prompt + "\nTEMPERATURE: " + item.temperature + "\nRESPONSE:" + item.text + "\n\n")
-
-  //   const docDefinition = {
-  //     content: [
-  //       { text: "The Geeps Super Knowledge Machine Results: ", bold: true },
-  //       { text: moment().format('MMMM Do YYYY, h:mm:ss a') },
-  //       { text: "\n", fontSize: 10 },
-  //       { text: printableInput, fontSize: 10, bold: true },
-  //       { text: "  ", fontSize: 10 }]
-  //   }
-
-  //   pdfMake.createPdf(docDefinition).download("Geeps_Keeper.pdf").open();
-
-  // }
-
-  const progressInputDisplay = progressInput && progressInput.map(item => {
-    // console.log("item", item)
-    return (<>
-      <img src={item?.image} alt="ai_image" width="50px" height="50px" />
-      <h3 style={{ margin: "5px", color: "grey", cursor: "pointer" }}>     {item.text}
-        <span
-          onClick={() => deleteItem(item)}
-          style={{ cursor: "pointer" }}> ❌
-        </span>
-      </h3></>)
-  })
-
-  const style = { height: 300 };
 
   return (
     <div className="App">
+
       <ToastContainer />
       <header className="App-header">
-        <SavedStories />
-        <h1 style={{ margin: "2px" }}>Picture Book</h1>
+        <h1 style={{ margin: "1px", fontSize: "2em", fontFamily: "Garamond" }}>Picture Book</h1>
       </header>
       <body>
         <br />
-        <Lottie animationData={robot2} loop={true} style={style} />
+        <Lottie
+          animationData={animatedRobot}
+          loop={true}
+          style={robotStyle} />
         <h2>Write a story about...</h2>
         <form onSubmit={e => e.preventDefault()}>
           <textarea
@@ -156,86 +116,62 @@ function App() {
               step={10}
               name="max_tokens"
               min="100" max="500"
+              default="200"
               {...register('max_tokens', { required: true })} />
           </div>
 
           <br />
 
-          {isLoading ?
-            <Lottie animationData={loadingAnimation} loop={true} style={style} />
+          {isLoading
+            ?
+            <Lottie animationData={loadingAnimation} loop={true} style={robotStyle} />
             : <Button
               onClick={handleSubmit(onSubmit)}
               size="huge"
               type="submit"
-              inverted color='blue'>Ask Geeps!
+              inverted color='blue'>Write it!
             </Button>
           }
 
           <br />
-          {responseAI &&
-            <>
-              {responseAI && responseAI[1] ?
-                <div>
-                  <img src={responseAI[1]} alt="ai_image" width="350px" height="350px" />
-                </div> :
-                null}
-
-              <Container text>
-                <h2>{responseAI[2]}</h2>
-                <br />
-              </Container>
-
-              <Button onClick={keeper} color="green">Keeper</Button>
-              <Button onClick={clearEntry} color="yellow">Clear Entry</Button>
-              <br />
-            </>
-          }
-
-          <br />
-          <br />
-
-          {progressInput?.length > 0 &&
-            <>
-              <div
-                style={{
-                  width: "60%",
-                  height: "auto",
-                  margin: "0 auto",
-                  position: "relative"
-                  // justifyContent: "center"
-                  // alignItems: "center"
-                }}>
-
-                <div
-                  style={{
-                    textAlign: "left",
-                    width: "100%",
-                    borderStyle: "solid",
-                    borderWidth: "1px",
-                    borderColor: "black"
-                  }}>
-
-                  <h2 style={{ color: "grey", textAlign: "center" }}>All the Keepers:</h2>
-                  {progressInputDisplay}
-
-                </div>
-                <br />
-                <img src={downloadPdf} height="30" alt="pdf_button" onClick={() => makePDF(progressInputDisplay)} />
-
-              </div>
-              <br />
-            </>
-          }
-
-          <br />
-          <br />
-          <br />
-
         </form>
+        <br />
+
+        {responseAI &&
+          <StoryDisplay
+            responseAI={responseAI}
+            keeper={keeper}
+            clearEntry={clearEntry}
+          />}
+
+        {currentStoryCollection?.length > 0 ? <SavedStoriesDisplay deleteItem={deleteItem} currentStoryCollection={currentStoryCollection} /> : null}
+
+
       </body>
     </div >
   );
 }
 
 export default App;
+
+
+
+
+
+
+  // const makePDF = () => {
+  //   const printableInput = currentStoryCollection.map(item => "PROMPT: " + item.prompt + "\nTEMPERATURE: " + item.temperature + "\nRESPONSE:" + item.text + "\n\n")
+
+  //   const docDefinition = {
+  //     content: [
+  //       { text: "The Geeps Super Knowledge Machine Results: ", bold: true },
+  //       { text: moment().format('MMMM Do YYYY, h:mm:ss a') },
+  //       { text: "\n", fontSize: 10 },
+  //       { text: printableInput, fontSize: 10, bold: true },
+  //       { text: "  ", fontSize: 10 }]
+  //   }
+
+  //   pdfMake.createPdf(docDefinition).download("Geeps_Keeper.pdf").open();
+
+  // }
 
