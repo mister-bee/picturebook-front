@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Button, Container } from 'semantic-ui-react'
+import { Button } from 'semantic-ui-react'
 import axios from 'axios'
 import './App.css';
 import { ToastContainer, toast } from 'react-toastify';
@@ -90,7 +90,7 @@ function App() {
             placeholder="GPT-3 question..."
             rows="8" cols="80"
             {...register('userRequest', { required: true, maxLength: 1000 })} />
-
+          {/* 
           <div>
             <br />
             <div>
@@ -103,9 +103,9 @@ function App() {
               name="temperature"
               min="0" max="1"
               {...register('temperature', { required: true })} />
-          </div>
+          </div> */}
 
-          <div>
+          {/* <div>
             <br />
             <div>
               <label>Enter max tokens. Default is 200.</label>
@@ -118,7 +118,7 @@ function App() {
               min="100" max="500"
               default="200"
               {...register('max_tokens', { required: true })} />
-          </div>
+          </div> */}
 
           <br />
 
@@ -145,7 +145,6 @@ function App() {
           />}
 
         {currentStoryCollection?.length > 0 ? <SavedStoriesDisplay deleteItem={deleteItem} currentStoryCollection={currentStoryCollection} /> : null}
-
 
       </body>
     </div >
