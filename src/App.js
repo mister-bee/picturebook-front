@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from 'semantic-ui-react'
 import axios from 'axios'
@@ -9,17 +9,35 @@ import Lottie from "lottie-react";
 import 'react-toastify/dist/ReactToastify.css';
 import loadingAnimation from './images/loading-animation.json';
 import animatedRobot from './images/99973-little-power-robot.json';
-import SavedStoriesDisplay from './components/SavedStoriesDisplay';
+import NewKeepersDisplay from './components/NewKeepersDisplay';
 import StoryDisplay from './components/StoryDisplay';
+import SavedDocs from './components/SavedDocs';
 
-function App() {
+function App(props) {
   const [responseAI, setResponseAI] = useState(null)
   const [currentStoryCollection, setCurrentStoryCollection] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
   const [temperature, setTemperature] = useState(null)
+
+  const [storedDocs, setStoredDocs] = useState(null)
+
   const [isLoading, setIsLoading] = useState(false)
+  const [errorLoading, setErrorLoading] = useState(false)
+
   const { register, handleSubmit, reset } = useForm({}); // errors
+
   const notify = (message) => toast(message);
+
+  const userEmail = "baboettcher@gmail.com"
+  const robotStyle = { height: 200 };
+
+  const { addDoc, getDocs, colRef } = props
+
+  // console.log("addDoc", addDoc)
+  // console.log("getDocs", getDocs)
+  // console.log("colRef", colRef)
+
+
 
   const onSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
@@ -50,6 +68,7 @@ function App() {
       meta: "meta data tbd",
       id: uuidv4()
     }
+    addDoc(colRef, { title: "COMING", userEmail, prompt: promptUsed, image: responseAI[1], text: responseAI[2], meta: "meta data tbd" })
 
     const updatedStoryCollection = currentStoryCollection ? [...currentStoryCollection] : []
     updatedStoryCollection.push(newItem)
@@ -62,21 +81,22 @@ function App() {
     reset()
   }
 
-  const robotStyle = { height: 200 };
-
   const deleteItem = (item) => {
     const storyCollection = [...currentStoryCollection]
     const filteredInput = storyCollection.filter(i => i.id !== item.id)
     setCurrentStoryCollection(filteredInput)
   }
 
+
   return (
     <div className="App">
 
       <ToastContainer />
       <header className="App-header">
-        <h1 style={{ margin: "1px", fontSize: "2em", fontFamily: "Garamond" }}>Picture Book</h1>
+        <h1 style={{ margin: "1px", fontSize: "3em", fontFamily: "Garamond" }}>Picture Book</h1>
+        <h5>LOGGED IN: {userEmail}</h5>
       </header>
+
       <body>
         <br />
         <Lottie
@@ -84,12 +104,14 @@ function App() {
           loop={true}
           style={robotStyle} />
         <h2>Write a story about...</h2>
+
         <form onSubmit={e => e.preventDefault()}>
           <textarea
             type="text"
             placeholder="GPT-3 question..."
             rows="8" cols="80"
             {...register('userRequest', { required: true, maxLength: 1000 })} />
+
           {/* 
           <div>
             <br />
@@ -123,19 +145,17 @@ function App() {
           <br />
 
           {isLoading
-            ?
-            <Lottie animationData={loadingAnimation} loop={true} style={robotStyle} />
-            : <Button
+            ? <Lottie animationData={loadingAnimation} loop={true} style={robotStyle} />
+
+            : <><Button
               onClick={handleSubmit(onSubmit)}
               size="huge"
               type="submit"
               inverted color='blue'>Write it!
-            </Button>
-          }
+            </Button><br /></>}
 
           <br />
         </form>
-        <br />
 
         {responseAI &&
           <StoryDisplay
@@ -144,7 +164,10 @@ function App() {
             clearEntry={clearEntry}
           />}
 
-        {currentStoryCollection?.length > 0 ? <SavedStoriesDisplay deleteItem={deleteItem} currentStoryCollection={currentStoryCollection} /> : null}
+        {currentStoryCollection?.length > 0 ? <NewKeepersDisplay deleteItem={deleteItem} currentStoryCollection={currentStoryCollection} /> : null}
+
+
+        <SavedDocs getDocs={getDocs} colRef={colRef} />
 
       </body>
     </div >

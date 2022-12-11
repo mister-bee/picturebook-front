@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function SavedStoriesDisplay(props) {
+export default function NewKeepersDisplay(props) {
   const { currentStoryCollection, deleteItem } = props
 
   const currentStoryCollectionDisplay = currentStoryCollection.map(item => {
@@ -19,7 +19,7 @@ export default function SavedStoriesDisplay(props) {
   })
 
   return <>
-    <h1>Saved Stories</h1>
+    <h1>NEW Saved Stories</h1>
     <div
       style={{
         width: "60%",
@@ -43,7 +43,6 @@ export default function SavedStoriesDisplay(props) {
       </div>
     </div>
   </>
-
 
 }
 
