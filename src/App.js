@@ -31,13 +31,7 @@ function App(props) {
   const userEmail = "baboettcher@gmail.com"
   const robotStyle = { height: 200 };
 
-  const { addDoc, getDocs, colRef } = props
-
-  // console.log("addDoc", addDoc)
-  // console.log("getDocs", getDocs)
-  // console.log("colRef", colRef)
-
-
+  const { addDoc, getDocs, colRef, db, doc, deleteDoc, onSnapshot } = props
 
   const onSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
@@ -87,6 +81,13 @@ function App(props) {
     setCurrentStoryCollection(filteredInput)
   }
 
+  const newPicture = () => {
+    console.log("NEW PICTURE REQUEST")
+  }
+
+  const newStory = () => {
+    console.log("NEW STORUY REQUEST")
+  }
 
   return (
     <div className="App">
@@ -162,12 +163,14 @@ function App(props) {
             responseAI={responseAI}
             keeper={keeper}
             clearEntry={clearEntry}
+            newPicture={newPicture}
           />}
 
         {currentStoryCollection?.length > 0 ? <NewKeepersDisplay deleteItem={deleteItem} currentStoryCollection={currentStoryCollection} /> : null}
 
 
-        <SavedDocs getDocs={getDocs} colRef={colRef} />
+        <SavedDocs
+          db={db} getDocs={getDocs} colRef={colRef} doc={doc} deleteDoc={deleteDoc} onSnapshot={onSnapshot} />
 
       </body>
     </div >

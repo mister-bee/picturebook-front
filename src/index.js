@@ -5,7 +5,7 @@ import App from './App';
 
 import "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore"
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
@@ -31,8 +31,15 @@ const colRef = collection(db, 'stories')
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App getDocs={getDocs} addDoc={addDoc} colRef={colRef} />
+    <App
+      getDocs={getDocs}
+      addDoc={addDoc}
+      colRef={colRef}
+      deleteDoc={deleteDoc}
+      doc={doc}
+      db={db}
+      onSnapshot={onSnapshot}
+    />
   </React.StrictMode>
 );
 
-// test
