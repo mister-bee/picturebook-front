@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
 import Lottie from "lottie-react";
 import 'react-toastify/dist/ReactToastify.css';
+import { NameForm } from './components/LoginEmail';
 import loadingAnimation from './images/loading-animation.json';
 import animatedRobot from './images/99973-little-power-robot.json';
 import NewKeepersDisplay from './components/NewKeepersDisplay';
@@ -88,6 +89,10 @@ function App(props) {
   const newStory = () => {
     console.log("NEW STORUY REQUEST")
   }
+
+  return (<><NameForm /> </>
+
+  )
 
   return (
     <div className="App">
