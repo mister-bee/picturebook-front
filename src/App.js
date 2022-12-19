@@ -20,6 +20,9 @@ function App(props) {
   const [promptUsed, setPromptUsed] = useState(null)
   const [temperature, setTemperature] = useState(null)
 
+  const [emailAndPassword, setEmailAndPassword] = useState(null)
+  const [signupEmailAndPassword, setSignupEmailAndPassword] = useState(null)
+
   const [storedDocs, setStoredDocs] = useState(null)
 
   const [isLoading, setIsLoading] = useState(false)
@@ -32,7 +35,7 @@ function App(props) {
   const userEmail = "baboettcher@gmail.com"
   const robotStyle = { height: 200 };
 
-  const { addDoc, getDocs, colRef, db, doc, deleteDoc, onSnapshot } = props
+  const { addDoc, getDocs, colRef, db, doc, deleteDoc, onSnapshot, auth } = props
 
   const onSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
@@ -90,7 +93,16 @@ function App(props) {
     console.log("NEW STORUY REQUEST")
   }
 
-  return (<><NameForm /> </>
+  console.log("emailAndPassword", emailAndPassword)
+  console.log("signupEmailAndPassword", signupEmailAndPassword)
+
+
+  return (<>
+    <NameForm
+      auth={auth}
+      setEmailAndPassword={setEmailAndPassword}
+      setSignupEmailAndPassword={setSignupEmailAndPassword} />
+  </>
 
   )
 
