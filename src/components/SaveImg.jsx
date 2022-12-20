@@ -1,37 +1,56 @@
-import React, { useState } from 'react';
-import { firebase } from './firebase';
+import { useState, useEffect } from "react";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  listAll,
+  list,
+} from "firebase/storage";
 
-function App() {
-  const [image, setImage] = useState(null);
+//import { storage } from "./firebase";
+import { storage } from "../index.js";
 
-  function handleImageChange(e) {
-    setImage(e.target.files[0]);
-  }
+import { v4 } from "uuid";
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (!image) {
-      return;
-    }
+function SaveImg() {
+  const [imageUpload, setImageUpload] = useState(null);
+  const [imageUrls, setImageUrls] = useState([]);
 
-    const storageRef = firebase.storage().ref();
-    const imageRef = storageRef.child(`images/${image.name}`);
-    imageRef.put(image).then(() => {
-      imageRef.getDownloadURL().then((url) => {
-        firebase
-          .firestore()
-          .collection('images')
-          .add({ url });
+  const imagesListRef = ref(storage, "images/");
+  const uploadFile = () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+    uploadBytes(imageRef, imageUpload).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((url) => {
+        setImageUrls((prev) => [...prev, url]);
       });
     });
+  };
 
-    setImage(null);
-  }
+  useEffect(() => {
+    listAll(imagesListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageUrls((prev) => [...prev, url]);
+        });
+      });
+    });
+  }, []);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="file" onChange={handleImageChange} />
-      <button type="submit">Save Image</button>
-    </form>
+    <div className="SaveImg">
+      <input
+        type="file"
+        onChange={(event) => {
+          setImageUpload(event.target.files[0]);
+        }}
+      />
+      <button onClick={uploadFile}> Upload Image</button>
+      {imageUrls.map((url) => {
+        return <img src={url} />;
+      })}
+    </div>
   );
 }
+
+export default SaveImg;

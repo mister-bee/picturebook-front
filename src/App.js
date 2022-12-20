@@ -14,6 +14,7 @@ import NewKeepersDisplay from './components/NewKeepersDisplay';
 import StoryDisplay from './components/StoryDisplay';
 import SavedDocs from './components/SavedDocs';
 import Logout from './components/Logout';
+import SaveImg from './components/SaveImg';
 
 function App(props) {
   const [responseAI, setResponseAI] = useState(null)
@@ -106,7 +107,6 @@ function App(props) {
   return currentUser ?
 
     <div className="App">
-
       <ToastContainer />
       <header className="App-header">
         <h1 style={{ margin: "1px", fontSize: "3em", fontFamily: "Garamond" }}>Picture Book</h1>
@@ -115,6 +115,7 @@ function App(props) {
       </header>
 
       <body>
+        <SaveImg />
         <br />
         <Lottie
           animationData={animatedRobot}
@@ -167,13 +168,6 @@ function App(props) {
 
 
     : <NameForm auth={auth} />
-
-
-
-
-
-
-
 }
 
 export default App;
