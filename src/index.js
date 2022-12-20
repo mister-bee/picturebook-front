@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"
 
@@ -29,7 +29,6 @@ const colRef = collection(db, 'stories')
 
 // auth
 const auth = getAuth()
-console.log("auth", auth)
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -44,6 +43,7 @@ root.render(
       doc={doc}
       db={db}
       onSnapshot={onSnapshot}
+      onAuthStateChanged={onAuthStateChanged}
 
     />
   </React.StrictMode>

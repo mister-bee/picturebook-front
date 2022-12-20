@@ -13,6 +13,7 @@ import animatedRobot from './images/99973-little-power-robot.json';
 import NewKeepersDisplay from './components/NewKeepersDisplay';
 import StoryDisplay from './components/StoryDisplay';
 import SavedDocs from './components/SavedDocs';
+import Logout from './components/Logout';
 
 function App(props) {
   const [responseAI, setResponseAI] = useState(null)
@@ -20,13 +21,12 @@ function App(props) {
   const [promptUsed, setPromptUsed] = useState(null)
   const [temperature, setTemperature] = useState(null)
 
-  const [emailAndPassword, setEmailAndPassword] = useState(null)
-  const [signupEmailAndPassword, setSignupEmailAndPassword] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null)
 
-  const [storedDocs, setStoredDocs] = useState(null)
+  // const [storedDocs, setStoredDocs] = useState(null)
 
   const [isLoading, setIsLoading] = useState(false)
-  const [errorLoading, setErrorLoading] = useState(false)
+  // const [errorLoading, setErrorLoading] = useState(false)
 
   const { register, handleSubmit, reset } = useForm({}); // errors
 
@@ -35,7 +35,17 @@ function App(props) {
   const userEmail = "baboettcher@gmail.com"
   const robotStyle = { height: 200 };
 
-  const { addDoc, getDocs, colRef, db, doc, deleteDoc, onSnapshot, auth } = props
+  const { addDoc, getDocs, colRef, db, doc, deleteDoc, onSnapshot, auth, onAuthStateChanged } = props
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      console.log("user state changed:", user)
+      setCurrentUser(user)
+    })
+  }, [])
+
+
+
 
   const onSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
@@ -90,29 +100,18 @@ function App(props) {
   }
 
   const newStory = () => {
-    console.log("NEW STORUY REQUEST")
+    console.log("NEW STORY REQUEST")
   }
 
-  console.log("emailAndPassword", emailAndPassword)
-  console.log("signupEmailAndPassword", signupEmailAndPassword)
+  return currentUser ?
 
-
-  return (<>
-    <NameForm
-      auth={auth}
-      setEmailAndPassword={setEmailAndPassword}
-      setSignupEmailAndPassword={setSignupEmailAndPassword} />
-  </>
-
-  )
-
-  return (
     <div className="App">
 
       <ToastContainer />
       <header className="App-header">
         <h1 style={{ margin: "1px", fontSize: "3em", fontFamily: "Garamond" }}>Picture Book</h1>
-        <h5>LOGGED IN: {userEmail}</h5>
+        <h5>LOGGED IN: {currentUser.email}</h5>
+        <Logout color="blue" auth={auth} />
       </header>
 
       <body>
@@ -130,35 +129,7 @@ function App(props) {
             rows="8" cols="80"
             {...register('userRequest', { required: true, maxLength: 1000 })} />
 
-          {/* 
-          <div>
-            <br />
-            <div>
-              <label>Enter the 'temperature' between 0 and 1. The closer to 1 the more chances the AI will take.</label>
-            </div>
-            <input
-              label="Temperature"
-              type="number"
-              step={.01}
-              name="temperature"
-              min="0" max="1"
-              {...register('temperature', { required: true })} />
-          </div> */}
 
-          {/* <div>
-            <br />
-            <div>
-              <label>Enter max tokens. Default is 200.</label>
-            </div>
-            <input
-              label="Max_tokens"
-              type="number"
-              step={10}
-              name="max_tokens"
-              min="100" max="500"
-              default="200"
-              {...register('max_tokens', { required: true })} />
-          </div> */}
 
           <br />
 
@@ -191,7 +162,18 @@ function App(props) {
 
       </body>
     </div >
-  );
+
+
+
+
+    : <NameForm auth={auth} />
+
+
+
+
+
+
+
 }
 
 export default App;
