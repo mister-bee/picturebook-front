@@ -9,6 +9,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"
 import { getStorage } from "firebase/storage";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
@@ -33,6 +34,8 @@ const colRef = collection(db, 'stories')
 // auth
 const auth = getAuth()
 
+const analytics = getAnalytics(app);
+
 
 // storage
 export const storage = getStorage(app);
@@ -42,17 +45,20 @@ export const storage = getStorage(app);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App
-      auth={auth}
-      getDocs={getDocs}
-      addDoc={addDoc}
-      colRef={colRef}
-      deleteDoc={deleteDoc}
-      doc={doc}
-      db={db}
-      onSnapshot={onSnapshot}
-      onAuthStateChanged={onAuthStateChanged} />
-  </React.StrictMode>
+
+  <App
+    auth={auth}
+    getDocs={getDocs}
+    addDoc={addDoc}
+    colRef={colRef}
+    deleteDoc={deleteDoc}
+    doc={doc}
+    db={db}
+    onSnapshot={onSnapshot}
+    onAuthStateChanged={onAuthStateChanged} />
+
 );
 
+// <React.StrictMode>
+
+{/* </React.StrictMode> */ }
