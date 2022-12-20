@@ -6,6 +6,8 @@ function saveImageToLocalStorage(imageUrl) {
 
   // Set the src of the image element to the image url
   imageElement.src = imageUrl;
+  imageElement.crossOrigin = 'anonymous';
+
 
   // When the image has finished loading, get the image data as a base64-encoded string
   imageElement.onload = () => {
@@ -28,10 +30,11 @@ function getBase64Image(img) {
   return canvas.toDataURL('image/png');
 }
 
-function MyComponent() {
+export const SaveToLocalStorage = () => {
   return (
     <div>
-      <button onClick={() => saveImageToLocalStorage('https://example.com/image.png')}>
+      <button onClick={() => saveImageToLocalStorage('https://premierpups.com/azure/affordablepup/pups/french-bulldog-puppies-637637524473115475.jpg?w=557&h=557&mode=crop&autorotate=1')}>
+        {/* <button onClick={() => saveImageToLocalStorage('https://example.com/image.png')}> */}
         Save Image
       </button>
     </div>
@@ -43,12 +46,13 @@ function MyComponent() {
 // You can then retrieve the image data from local storage and display it in your app by using the localStorage.getItem function.
 
 
-function GetImageFromLocalStorage() {
+export const GetImageFromLocalStorage = () => {
   const imageData = localStorage.getItem('image');
+  console.log("imageData", imageData)
 
   return (
     <div>
-      <img src={imageData} />
+      <img src={imageData} alt="" />
     </div>
   );
 }

@@ -15,6 +15,8 @@ import StoryDisplay from './components/StoryDisplay';
 import SavedDocs from './components/SavedDocs';
 import Logout from './components/Logout';
 import SaveImg from './components/SaveImg';
+import { SaveToLocalStorage, GetImageFromLocalStorage } from './components/SaveToLocalStorage';
+
 
 function App(props) {
   const [responseAI, setResponseAI] = useState(null)
@@ -115,6 +117,8 @@ function App(props) {
       </header>
 
       <body>
+        <SaveToLocalStorage />
+        <GetImageFromLocalStorage />
         <SaveImg />
         <br />
         <Lottie
