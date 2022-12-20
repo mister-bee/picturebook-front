@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { firebase } from './firebase';
 
-function App() {
+function SaveImg() {
   const [imageUrl, setImageUrl] = useState('');
 
   function handleImageUrlChange(e) {
