@@ -13,7 +13,8 @@ import { v4 } from "uuid";
 
 const size = "100px"
 
-function SaveImg() {
+function SaveImg(props) {
+  // const {imageUrl} = props
   //const [imageUpload, setImageUpload] = useState(null);
   const [imageUpload, setImageUpload] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
@@ -47,6 +48,7 @@ function SaveImg() {
         type="file"
         onChange={(event) => {
           setImageUpload(event.target.files[0]);
+          console.log("zzzzzzzzzz>>>>>>>>>", event.target.files[0])
         }}
       />
       <button onClick={uploadFile}> Upload Image</button>

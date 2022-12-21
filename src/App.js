@@ -177,23 +177,3 @@ function App(props) {
 export default App;
 
 
-
-
-
-
-  // const makePDF = () => {
-  //   const printableInput = currentStoryCollection.map(item => "PROMPT: " + item.prompt + "\nTEMPERATURE: " + item.temperature + "\nRESPONSE:" + item.text + "\n\n")
-
-  //   const docDefinition = {
-  //     content: [
-  //       { text: "The Geeps Super Knowledge Machine Results: ", bold: true },
-  //       { text: moment().format('MMMM Do YYYY, h:mm:ss a') },
-  //       { text: "\n", fontSize: 10 },
-  //       { text: printableInput, fontSize: 10, bold: true },
-  //       { text: "  ", fontSize: 10 }]
-  //   }
-
-  //   pdfMake.createPdf(docDefinition).download("Geeps_Keeper.pdf").open();
-
-  // }
-
