@@ -13,6 +13,7 @@ import animatedRobot from './images/99973-little-power-robot.json';
 import StoryDisplay from './components/StoryDisplay';
 import DisplayFirestoreDocs from './components/DisplayFirestoreDocs';
 import Logout from './components/Logout';
+import SaveImg from './components/DisplayFirestoreImages';
 
 
 function App(props) {
@@ -114,6 +115,7 @@ function App(props) {
       </header>
 
       <body>
+        <SaveImg />
         <br />
         <Lottie
           animationData={animatedRobot}
