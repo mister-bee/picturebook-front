@@ -21,19 +21,13 @@ function App(props) {
   const [currentStoryCollection, setCurrentStoryCollection] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
   const [temperature, setTemperature] = useState(null)
-
   const [currentUser, setCurrentUser] = useState(null)
-
-  // const [storedDocs, setStoredDocs] = useState(null)
-
   const [isLoading, setIsLoading] = useState(false)
-  // const [errorLoading, setErrorLoading] = useState(false)
 
   const { register, handleSubmit, reset } = useForm({}); // errors
 
   const notify = (message) => toast(message);
 
-  const userEmail = "baboettcher@gmail.com"
   const robotStyle = { height: 200 };
 
   const { addDoc, getDocs, colRef, db, doc, deleteDoc, onSnapshot, auth, onAuthStateChanged } = props
@@ -51,7 +45,7 @@ function App(props) {
   const onSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
     const { userRequest, temperature } = formInput
-    const openAiRequest = { userRequest, temperature: parseFloat(temperature) };
+    const openAiRequest = { userRequest, temperature: parseFloat(temperature), userId: currentUser?.uid };
 
     setPromptUsed(userRequest)
     setTemperature(parseFloat(temperature))
@@ -69,18 +63,23 @@ function App(props) {
   };
 
   const keeper = () => {
-    const newItem = {
+    const newStory = {
       prompt: promptUsed,
       temperature,
-      image: responseAI[1],
+      image: responseAI[1], // NEED TO UPDATE THIS TO GOOGLE URL 
       text: responseAI[2],
       meta: "meta data tbd",
-      id: uuidv4()
+      title: "COMING SOON",
+      id: uuidv4(),
+      userId: currentUser.uid,
+      userDisplayName: currentUser?.displayName,
+      userEmail: currentUser?.email
     }
-    addDoc(colRef, { title: "COMING", userEmail, prompt: promptUsed, image: responseAI[1], text: responseAI[2], meta: "meta data tbd" })
+
+    addDoc(colRef, newStory)
 
     const updatedStoryCollection = currentStoryCollection ? [...currentStoryCollection] : []
-    updatedStoryCollection.push(newItem)
+    updatedStoryCollection.push(newStory)
     setCurrentStoryCollection(updatedStoryCollection)
     setResponseAI(null)
   }
@@ -153,13 +152,15 @@ function App(props) {
           />}
 
         <DisplayFirestoreDocs
-          db={db} getDocs={getDocs} colRef={colRef} doc={doc} deleteDoc={deleteDoc} onSnapshot={onSnapshot} />
+          db={db}
+          getDocs={getDocs}
+          colRef={colRef}
+          doc={doc}
+          deleteDoc={deleteDoc}
+          onSnapshot={onSnapshot} />
 
       </body>
     </div >
-
-
-
 
     : <NameForm auth={auth} />
 }
