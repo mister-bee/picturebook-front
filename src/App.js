@@ -13,22 +13,20 @@ import animatedRobot from './images/99973-little-power-robot.json';
 import StoryDisplay from './components/StoryDisplay';
 import DisplayFirestoreDocs from './components/DisplayFirestoreDocs';
 import Logout from './components/Logout';
-import SaveImg from './components/DisplayFirestoreImages';
-
+import DisplayFirestoreImages from './components/DisplayFirestoreImages';
 
 function App(props) {
   const [responseAI, setResponseAI] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null)
   const [currentStoryCollection, setCurrentStoryCollection] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
   const [temperature, setTemperature] = useState(null)
-  const [currentUser, setCurrentUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const { register, handleSubmit, reset } = useForm({}); // errors
-
   const notify = (message) => toast(message);
-
   const robotStyle = { height: 200 };
+
 
   const { addDoc, getDocs, colRef, db, doc, deleteDoc, onSnapshot, auth, onAuthStateChanged } = props
 
@@ -38,8 +36,6 @@ function App(props) {
       setCurrentUser(user)
     })
   }, [])
-
-
 
 
   const onSubmit = formInput => {
@@ -114,7 +110,7 @@ function App(props) {
       </header>
 
       <body>
-        <SaveImg />
+        <DisplayFirestoreImages userId={currentUser.uid} />
         <br />
         <Lottie
           animationData={animatedRobot}

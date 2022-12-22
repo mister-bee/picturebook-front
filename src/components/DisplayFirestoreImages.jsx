@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import {
   ref,
-  uploadBytes,
+  // uploadBytes,
   getDownloadURL,
   listAll,
-  list,
+  // list,
 } from "firebase/storage";
 
 import { storage } from "../index.js";
@@ -12,11 +12,13 @@ import { storage } from "../index.js";
 const size = "100px"
 
 const DisplayImages = (props) => {
-  //const userStorageFolder = { props }
-  const userStorageFolder = "images/USER123/"
+  const { userId } = props
 
-  const [imageUrls, setImageUrls] = useState([]);
-  const imagesListRef = ref(storage, userStorageFolder);
+  const folderPrefix = "images/USERSET_A_"
+  const entirePrefix = folderPrefix + userId + "/"
+
+  const [imageUrls, setImageUrls] = useState([])
+  const imagesListRef = ref(storage, entirePrefix);
 
   useEffect(() => {
     listAll(imagesListRef).then((response) => {
