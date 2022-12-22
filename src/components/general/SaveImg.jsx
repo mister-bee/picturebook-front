@@ -8,7 +8,7 @@ import {
 } from "firebase/storage";
 
 //import { storage } from "./firebase";
-import { storage } from "../index.js";
+import { storage } from "../../index.js";
 import { v4 } from "uuid";
 
 const size = "100px"
@@ -52,6 +52,7 @@ function SaveImg(props) {
         }}
       />
       <button onClick={uploadFile}> Upload Image</button>
+
       {imageUrls.map((url) => {
         return <img src={url} height={size} width={size} />;
       })}

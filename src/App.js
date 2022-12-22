@@ -10,12 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { NameForm } from './components/LoginEmail';
 import loadingAnimation from './images/loading-animation.json';
 import animatedRobot from './images/99973-little-power-robot.json';
-import NewKeepersDisplay from './components/NewKeepersDisplay';
 import StoryDisplay from './components/StoryDisplay';
-import SavedDocs from './components/SavedDocs';
+import DisplayFirestoreDocs from './components/DisplayFirestoreDocs';
 import Logout from './components/Logout';
-import SaveImg from './components/SaveImg';
-import { SaveToLocalStorage, GetImageFromLocalStorage } from './components/SaveToLocalStorage';
 
 
 function App(props) {
@@ -117,9 +114,6 @@ function App(props) {
       </header>
 
       <body>
-        <SaveToLocalStorage />
-        <GetImageFromLocalStorage />
-        <SaveImg />
         <br />
         <Lottie
           animationData={animatedRobot}
@@ -133,9 +127,6 @@ function App(props) {
             placeholder="GPT-3 question..."
             rows="8" cols="80"
             {...register('userRequest', { required: true, maxLength: 1000 })} />
-
-
-
           <br />
 
           {isLoading
@@ -159,10 +150,7 @@ function App(props) {
             newPicture={newPicture}
           />}
 
-        {currentStoryCollection?.length > 0 ? <NewKeepersDisplay deleteItem={deleteItem} currentStoryCollection={currentStoryCollection} /> : null}
-
-
-        <SavedDocs
+        <DisplayFirestoreDocs
           db={db} getDocs={getDocs} colRef={colRef} doc={doc} deleteDoc={deleteDoc} onSnapshot={onSnapshot} />
 
       </body>
