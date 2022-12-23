@@ -3,6 +3,10 @@ import { useForm } from 'react-hook-form'
 import { Button } from 'semantic-ui-react'
 import axios from 'axios'
 import './App.css';
+
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"
+
+
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
 import Lottie from "lottie-react";
@@ -27,8 +31,24 @@ function App(props) {
   const notify = (message) => toast(message);
   const robotStyle = { height: 200 };
 
+  const { db, auth, onAuthStateChanged } = props
 
-  const { addDoc, getDocs, colRef, db, doc, deleteDoc, onSnapshot, auth, onAuthStateChanged } = props
+  const testUserId = "abc123"
+  //const folderPrefix = 'stories_USER_' + currentUser?.uid
+  //const folderPrefix = 'stories_USER_' + currentUser?.uid
+  // console.log("🌹===> folderPrefix", folderPrefix)
+
+  //const colRef = collection(db, folderPrefix)
+  //const colRef = collection(db, "stories")
+
+  // users collection, userID, stories-sub collection, storyId
+  // const colRef = collection(db, "users", "userID", "stories", "storyId")
+  const thisStoryId = uuidv4()
+
+  //const colRef = collection(db, "users", currentUser?.uid, "stories")
+
+  const colRef = collection(db, "users", testUserId, "stories2")
+
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -66,15 +86,20 @@ function App(props) {
       text: responseAI[2],
       meta: "meta data tbd",
       title: "COMING SOON",
-      id: uuidv4(),
+      id: thisStoryId, // fix
       userId: currentUser.uid,
       userDisplayName: currentUser?.displayName,
       userEmail: currentUser?.email
     }
 
-    addDoc(colRef, newStory)
+    addDoc(colRef, newStory).then((result) => {
+      console.log(result).catch((err) => {
+        console.error(err.message)
+      })
+    })
 
     const updatedStoryCollection = currentStoryCollection ? [...currentStoryCollection] : []
+
     updatedStoryCollection.push(newStory)
     setCurrentStoryCollection(updatedStoryCollection)
     setResponseAI(null)

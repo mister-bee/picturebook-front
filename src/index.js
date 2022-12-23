@@ -7,7 +7,10 @@ import App from './App';
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"
+import {
+  getFirestore
+  //collection, getDocs, addDoc, deleteDoc, doc, onSnapshot 
+} from "firebase/firestore"
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 
@@ -29,13 +32,12 @@ const app = initializeApp(firebaseConfig)
 const db = getFirestore()
 
 // collection ref
-const colRef = collection(db, 'stories')
+// const colRef = collection(db, 'stories')
 
 // auth
 const auth = getAuth()
 
 const analytics = getAnalytics(app);
-
 
 // storage
 export const storage = getStorage(app);
@@ -48,14 +50,14 @@ root.render(
 
   <App
     auth={auth}
-    getDocs={getDocs}
-    addDoc={addDoc}
-    colRef={colRef}
-    deleteDoc={deleteDoc}
-    doc={doc}
     db={db}
-    onSnapshot={onSnapshot}
-    onAuthStateChanged={onAuthStateChanged} />
+    onAuthStateChanged={onAuthStateChanged}
+  // onSnapshot={onSnapshot}
+  // addDoc={addDoc}
+  // colRef={colRef}
+  // deleteDoc={deleteDoc}
+  // doc={doc}
+  />
 
 );
 
