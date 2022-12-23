@@ -4,14 +4,13 @@ import { Button } from 'semantic-ui-react'
 import axios from 'axios'
 import './App.css';
 
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"
-
+import { collection, getDocs, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"
 
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
 import Lottie from "lottie-react";
 import 'react-toastify/dist/ReactToastify.css';
-import { NameForm } from './components/LoginEmail';
+import { LoginWithEmail } from './components/LoginEmail';
 import loadingAnimation from './images/loading-animation.json';
 import animatedRobot from './images/99973-little-power-robot.json';
 import StoryDisplay from './components/StoryDisplay';
@@ -33,22 +32,15 @@ function App(props) {
 
   const { db, auth, onAuthStateChanged } = props
 
-  const testUserId = "abc123"
-  //const folderPrefix = 'stories_USER_' + currentUser?.uid
-  //const folderPrefix = 'stories_USER_' + currentUser?.uid
-  // console.log("🌹===> folderPrefix", folderPrefix)
-
-  //const colRef = collection(db, folderPrefix)
-  //const colRef = collection(db, "stories")
-
-  // users collection, userID, stories-sub collection, storyId
-  // const colRef = collection(db, "users", "userID", "stories", "storyId")
   const thisStoryId = uuidv4()
 
-  //const colRef = collection(db, "users", currentUser?.uid, "stories")
 
-  const colRef = collection(db, "users", testUserId, "stories2")
+  // FRIDAY AFTERNOON
+  // create useEffect
+  // setUserId afterload
+  // give to colRef components after
 
+  const colRef = collection(db, "users", "testUserId--DO THIS AFER LUNCH", "stories")
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -58,7 +50,7 @@ function App(props) {
   }, [])
 
 
-  const onSubmit = formInput => {
+  const onStoryRequestSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
     const { userRequest, temperature } = formInput
     const openAiRequest = { userRequest, temperature: parseFloat(temperature), userId: currentUser?.uid };
@@ -79,6 +71,8 @@ function App(props) {
   };
 
   const keeper = () => {
+    if (!currentUser) return null
+
     const newStory = {
       prompt: promptUsed,
       temperature,
@@ -143,7 +137,7 @@ function App(props) {
           style={robotStyle} />
         <h2>Write a story about...</h2>
 
-        <form onSubmit={e => e.preventDefault()}>
+        <form onStoryRequestSubmit={e => e.preventDefault()}>
           <textarea
             type="text"
             placeholder="GPT-3 question..."
@@ -155,7 +149,7 @@ function App(props) {
             ? <Lottie animationData={loadingAnimation} loop={true} style={robotStyle} />
 
             : <><Button
-              onClick={handleSubmit(onSubmit)}
+              onClick={handleSubmit(onStoryRequestSubmit)}
               size="huge"
               type="submit"
               inverted color='blue'>Write it!
@@ -183,7 +177,7 @@ function App(props) {
       </body>
     </div >
 
-    : <NameForm auth={auth} />
+    : <LoginWithEmail auth={auth} db={db} />
 }
 
 export default App;

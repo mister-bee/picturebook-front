@@ -11,6 +11,5 @@ export default function Logout(props) {
       onClick={() => signOut(auth).then(() => console.log("SIGNOUT").catch((err => console.error(err.message))))} >
       Signout
     </Button>
-
   )
 }

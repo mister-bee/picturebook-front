@@ -52,15 +52,9 @@ root.render(
     auth={auth}
     db={db}
     onAuthStateChanged={onAuthStateChanged}
-  // onSnapshot={onSnapshot}
-  // addDoc={addDoc}
-  // colRef={colRef}
-  // deleteDoc={deleteDoc}
-  // doc={doc}
   />
 
 );
 
-// <React.StrictMode>
 
-{/* </React.StrictMode> */ }
+// <React.StrictMode> </React.StrictMode> 

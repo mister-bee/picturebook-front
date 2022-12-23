@@ -4,7 +4,6 @@ import { Button, Container } from 'semantic-ui-react'
 export default function StoryDisplay(props) {
   const { responseAI, keeper, clearEntry, newPicture } = props
 
-  //console.log("URL", responseAI && responseAI[1])
   return (<>
     {responseAI[1] ?
       <div>

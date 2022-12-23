@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { Button } from 'semantic-ui-react'
-import { createUserWithEmailAndPassword, signOut, signInWithEmailAndPassword } from "firebase/auth";
-import Logout from "./Logout";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore"
 
-export function NameForm(props) {
-  const { auth } = props
+export function LoginWithEmail(props) {
+  const { auth, db } = props
   const [showSignUp, setShowSignUp] = useState(false)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  //const colRefNewUser = collection(db, "users")
 
   const handleSignIn = (evt) => {
     evt.preventDefault();
@@ -20,6 +21,27 @@ export function NameForm(props) {
   const handleSignUp = (evt) => {
     evt.preventDefault();
     createUserWithEmailAndPassword(auth, email, password).then((cred) => {
+
+      // ------------------------------------
+
+      const userId = cred.user.uid
+
+      const newUser = {
+        credit: 10,
+        photoURL: cred.user.photoURL,
+        email: cred.user.email,
+        userId,
+        userDisplayName: cred.user.displayName,
+        lalala: "more metadata to come"
+      }
+
+      // set title of user file to userID
+      setDoc(doc(db, "users", userId), newUser)
+      console.log("cred==> cred.user.uid", cred.user.uid)
+
+
+    }).catch((err) => {
+      console.error(err.message)
     })
   }
 
@@ -34,7 +56,6 @@ export function NameForm(props) {
     {showSignUp ?
       <> <h1 style={{ color: "orange" }}>New Account</h1>
         <form onSubmit={handleSignUp}>
-
           <h3>
             <label>
               Email
@@ -54,6 +75,7 @@ export function NameForm(props) {
               <Button color="black" size="large" type="submit">Create Account</Button>
             </div>
           </h3>
+
         </form>
         <br />
         <br />
@@ -96,7 +118,6 @@ export function NameForm(props) {
         <Button onClick={toggleSignup} color="blue" size="mini">Sign up</Button>
       </>}
     <div>
-      {/* <Logout auth={auth} /> */}
 
     </div>
   </>
