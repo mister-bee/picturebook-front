@@ -22,8 +22,6 @@ function App(props) {
   const [responseAI, setResponseAI] = useState(null)
   const [currentUser, setCurrentUser] = useState(null)
 
-  const [colRefStories, setColRefStories] = useState(null)
-
   const [currentStoryCollection, setCurrentStoryCollection] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
   const [temperature, setTemperature] = useState(null)
@@ -38,15 +36,6 @@ function App(props) {
   const thisStoryId = uuidv4()
 
 
-  // FRIDAY AFTERNOON
-  // create useEffect
-  // setUserId afterload
-  // give to colRef components after
-
-  // const colRef = collection(db, "users", "currentUser?.uid", "stories")
-
-
-
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       console.log("user state changed:", user)
@@ -54,12 +43,9 @@ function App(props) {
     })
   }, [])
 
-  useEffect(() => {
-    if (currentUser?.uid) {
-      console.log("🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸 SETTING!===>>>")
-      setColRefStories(collection(db, "users", currentUser?.uid, "stories"))
-    }
-  }, [currentUser])
+
+  const colRefStories = collection(db, "users", "yV3B7I1kNGeRFT8dDbEl23pTIfC3", "stories")
+
 
 
   const onStoryRequestSubmit = formInput => {
@@ -98,17 +84,8 @@ function App(props) {
       userEmail: currentUser?.email
     }
 
-    // Option #1 : create new story with random title
-    // addDoc(colRefStories, newStory).then((result) => {
-    //   console.log(result).catch((err) => {
-    //     console.error(err.message)
-    //   })
-    // })
-
-    // Option #2: create new story with id as title
+    // Create new story with id as title
     setDoc(doc(db, "users", currentUser.uid, "stories", thisStoryId), newStory)
-
-
 
     const updatedStoryCollection = currentStoryCollection ? [...currentStoryCollection] : []
 
@@ -120,12 +97,6 @@ function App(props) {
   const clearEntry = () => {
     setResponseAI(null)
     reset()
-  }
-
-  const deleteItem = (item) => {
-    const storyCollection = [...currentStoryCollection]
-    const filteredInput = storyCollection.filter(i => i.id !== item.id)
-    setCurrentStoryCollection(filteredInput)
   }
 
   const newPicture = () => {
@@ -184,13 +155,9 @@ function App(props) {
             newPicture={newPicture}
           />}
 
-        {/* <DisplayFirestoreDocs
+        {currentUser?.uid && <DisplayFirestoreDocs
           db={db}
-          getDocs={getDocs}
-          colRef={colRefStories}
-          doc={doc}
-          deleteDoc={deleteDoc}
-          onSnapshot={onSnapshot} /> */}
+          userId={currentUser?.uid} />}
 
       </body>
     </div >
@@ -201,8 +168,22 @@ function App(props) {
 export default App;
 
 
- // addDoc(colRef, newStory).then((result) => {
-    //   console.log(result).catch((err) => {
-    //     console.error(err.message)
-    //   })
-    // })
+// addDoc(colRef, newStory).then((result) => {
+//   console.log(result).catch((err) => {
+//     console.error(err.message)
+//   })
+// })
+
+// const deleteItem = (item) => {
+//   const storyCollection = [...currentStoryCollection]
+//   const filteredInput = storyCollection.filter(i => i.id !== item.id)
+//   setCurrentStoryCollection(filteredInput)
+// }
+
+
+//   Option #1 : create new story with random title
+// addDoc(colRefStories, newStory).then((result) => {
+//   console.log(result).catch((err) => {
+//     console.error(err.message)
+//   })
+// })

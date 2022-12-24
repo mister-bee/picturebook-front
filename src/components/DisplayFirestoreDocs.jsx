@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react'
+import { collection, getDocs, addDoc, deleteDoc, setDoc, doc, onSnapshot } from "firebase/firestore"
 
 export default function DisplayFirestoreDocs(props) {
 
-  const { colRef, getDocs, db, doc, deleteDoc, onSnapshot } = props;
+  const { db, userId } = props;
+
+  const colRef = collection(db, "users", userId, "stories")
+
+
   const [savedStories, setSavedStories] = useState(null)
 
   useEffect(() => {
@@ -25,7 +30,8 @@ export default function DisplayFirestoreDocs(props) {
 
   const deleteItem = (item) => {
     console.log("🍄🍄🍄🍄 item DELETED===>>>", item)
-    const docRef = doc(db, 'stories', item.id)
+    // const docRef = doc(db, 'stories', item.id)
+    const docRef = doc(db, 'users', userId, 'stories', item.id)
     deleteDoc(docRef)
   }
 
