@@ -37,8 +37,6 @@ export function LoginWithEmail(props) {
 
       // set title of user file to userID
       setDoc(doc(db, "users", userId), newUser)
-      console.log("cred==> cred.user.uid", cred.user.uid)
-
 
     }).catch((err) => {
       console.error(err.message)

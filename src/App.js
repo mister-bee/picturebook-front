@@ -4,7 +4,7 @@ import { Button } from 'semantic-ui-react'
 import axios from 'axios'
 import './App.css';
 
-import { collection, getDocs, addDoc, deleteDoc, doc, onSnapshot } from "firebase/firestore"
+import { collection, getDocs, addDoc, deleteDoc, setDoc, doc, onSnapshot } from "firebase/firestore"
 
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
@@ -21,6 +21,9 @@ import DisplayFirestoreImages from './components/DisplayFirestoreImages';
 function App(props) {
   const [responseAI, setResponseAI] = useState(null)
   const [currentUser, setCurrentUser] = useState(null)
+
+  const [colRefStories, setColRefStories] = useState(null)
+
   const [currentStoryCollection, setCurrentStoryCollection] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
   const [temperature, setTemperature] = useState(null)
@@ -40,7 +43,9 @@ function App(props) {
   // setUserId afterload
   // give to colRef components after
 
-  const colRef = collection(db, "users", "testUserId--DO THIS AFER LUNCH", "stories")
+  // const colRef = collection(db, "users", "currentUser?.uid", "stories")
+
+
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -48,6 +53,13 @@ function App(props) {
       setCurrentUser(user)
     })
   }, [])
+
+  useEffect(() => {
+    if (currentUser?.uid) {
+      console.log("🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸 SETTING!===>>>")
+      setColRefStories(collection(db, "users", currentUser?.uid, "stories"))
+    }
+  }, [currentUser])
 
 
   const onStoryRequestSubmit = formInput => {
@@ -80,17 +92,23 @@ function App(props) {
       text: responseAI[2],
       meta: "meta data tbd",
       title: "COMING SOON",
-      id: thisStoryId, // fix
+      storyId: thisStoryId, // fix
       userId: currentUser.uid,
       userDisplayName: currentUser?.displayName,
       userEmail: currentUser?.email
     }
 
-    addDoc(colRef, newStory).then((result) => {
-      console.log(result).catch((err) => {
-        console.error(err.message)
-      })
-    })
+    // Option #1 : create new story with random title
+    // addDoc(colRefStories, newStory).then((result) => {
+    //   console.log(result).catch((err) => {
+    //     console.error(err.message)
+    //   })
+    // })
+
+    // Option #2: create new story with id as title
+    setDoc(doc(db, "users", currentUser.uid, "stories", thisStoryId), newStory)
+
+
 
     const updatedStoryCollection = currentStoryCollection ? [...currentStoryCollection] : []
 
@@ -166,13 +184,13 @@ function App(props) {
             newPicture={newPicture}
           />}
 
-        <DisplayFirestoreDocs
+        {/* <DisplayFirestoreDocs
           db={db}
           getDocs={getDocs}
-          colRef={colRef}
+          colRef={colRefStories}
           doc={doc}
           deleteDoc={deleteDoc}
-          onSnapshot={onSnapshot} />
+          onSnapshot={onSnapshot} /> */}
 
       </body>
     </div >
@@ -183,3 +201,8 @@ function App(props) {
 export default App;
 
 
+ // addDoc(colRef, newStory).then((result) => {
+    //   console.log(result).catch((err) => {
+    //     console.error(err.message)
+    //   })
+    // })

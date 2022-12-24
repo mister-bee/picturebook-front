@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-export default function SavedDocs(props) {
+export default function DisplayFirestoreDocs(props) {
 
   const { colRef, getDocs, db, doc, deleteDoc, onSnapshot } = props;
   const [savedStories, setSavedStories] = useState(null)
