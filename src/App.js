@@ -5,6 +5,7 @@ import axios from 'axios'
 import './App.css';
 
 import { collection, getDocs, addDoc, deleteDoc, setDoc, doc, onSnapshot } from "firebase/firestore"
+import { getStorage, ref, getDownloadURL } from "firebase/storage"
 
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
@@ -33,8 +34,9 @@ function App(props) {
 
   const { db, auth, onAuthStateChanged } = props
 
-  const thisStoryId = uuidv4()
+  const thisStoryId = uuidv4() // add to state on useEffect?
 
+  console.log("thisStoryId", thisStoryId)
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -43,14 +45,20 @@ function App(props) {
     })
   }, [])
 
-
-  const colRefStories = collection(db, "users", "yV3B7I1kNGeRFT8dDbEl23pTIfC3", "stories")
-
-
+  // add "real book suggestions" to notes
+  // 
+  const getImageUrl = (response) => {
+    const storage = getStorage();
+    console.log("GET URL HERE", response.data)
+    const prefix = "images/USERSET_A_" + currentUser.uid + "/"
+    // thisStoryId - from state
+  }
 
   const onStoryRequestSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
     const { userRequest, temperature } = formInput
+
+
     const openAiRequest = { userRequest, temperature: parseFloat(temperature), userId: currentUser?.uid };
 
     setPromptUsed(userRequest)
@@ -58,9 +66,12 @@ function App(props) {
     setIsLoading(true)
 
     axios.post(baseUrl + "openai", openAiRequest)
-      .then(response => {
-        setResponseAI(response.data)
+
+      .then((response) => {
+
+        setResponseAI(response.data) // need to integrate url
         setIsLoading(false)
+
       })
       .catch(error => {
         setIsLoading(false)
@@ -75,10 +86,11 @@ function App(props) {
       prompt: promptUsed,
       temperature,
       image: responseAI[1], // NEED TO UPDATE THIS TO GOOGLE URL 
+      bucketImg: "coming-soon",
       text: responseAI[2],
       meta: "meta data tbd",
       title: "COMING SOON",
-      storyId: thisStoryId, // fix
+      storyId: thisStoryId,
       userId: currentUser.uid,
       userDisplayName: currentUser?.displayName,
       userEmail: currentUser?.email
