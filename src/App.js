@@ -84,22 +84,24 @@ function App(props) {
       temperature,
     }
 
-    const imageFilePath = "images/USERSET_A_" + currentUser.uid + "/" + newStoryId
+    const suffixId = "_picturebook_DEC2022.png"
+    const imageFilePath = "images/USERSET_A_" + currentUser.uid + "/" + newStoryId + suffixId
 
     getDownloadURL(ref(storage, imageFilePath))
       .then((downloadURL) => {
         newStory.imageDownloadURL = downloadURL
         return
       })
+
       .then(() => {
         return ref(storage, imageFilePath)
+      })
 
-      }).then((imageDisplayURL) => {
+      .then((imageDisplayURL) => {
         newStory.bucketFullPath = imageDisplayURL.fullPath
       })
 
       .then(() => {
-
         // Save story to firestore 
         setDoc(doc(db, "users", currentUser.uid, "stories", newStoryId), newStory)
 
@@ -111,7 +113,6 @@ function App(props) {
             setResponseAI(null)
             setNewStoryId(uuidv4())
           })
-
           .catch((err) => { console.error(err.message) })
       })
   }
