@@ -4,9 +4,8 @@ import { Button } from 'semantic-ui-react'
 import axios from 'axios'
 import './App.css';
 
-import { collection, getDocs, addDoc, deleteDoc, setDoc, doc, onSnapshot } from "firebase/firestore"
+import { setDoc, doc } from "firebase/firestore"
 import { getStorage, ref, getDownloadURL } from "firebase/storage"
-
 import { ToastContainer, toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid'
 import Lottie from "lottie-react";
@@ -16,13 +15,13 @@ import loadingAnimation from './images/loading-animation.json';
 import animatedRobot from './images/99973-little-power-robot.json';
 import StoryDisplay from './components/StoryDisplay';
 import DisplayFirestoreDocs from './components/DisplayFirestoreDocs';
-import Logout from './components/Logout';
 import DisplayFirestoreImages from './components/DisplayFirestoreImages';
+import Logout from './components/Logout';
 
 function App(props) {
-  const [responseAI, setResponseAI] = useState(null)
   const [currentUser, setCurrentUser] = useState(null)
-
+  const [responseAI, setResponseAI] = useState(null)
+  const [newStoryId, setNewStoryId] = useState(null)
   const [currentStoryCollection, setCurrentStoryCollection] = useState(null)
   const [promptUsed, setPromptUsed] = useState(null)
   const [temperature, setTemperature] = useState(null)
@@ -30,13 +29,10 @@ function App(props) {
 
   const { register, handleSubmit, reset } = useForm({}); // errors
   const notify = (message) => toast(message);
+  const { db, auth, onAuthStateChanged } = props
   const robotStyle = { height: 200 };
 
-  const { db, auth, onAuthStateChanged } = props
-
-  const thisStoryId = uuidv4() // add to state on useEffect?
-
-  console.log("thisStoryId", thisStoryId)
+  const storage = getStorage();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -45,33 +41,27 @@ function App(props) {
     })
   }, [])
 
-  // add "real book suggestions" to notes
-  // 
-  const getImageUrl = (response) => {
-    const storage = getStorage();
-    console.log("GET URL HERE", response.data)
-    const prefix = "images/USERSET_A_" + currentUser.uid + "/"
-    // thisStoryId - from state
-  }
+  useEffect(() => {
+    setNewStoryId(uuidv4())
+  }, [])
 
   const onStoryRequestSubmit = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
     const { userRequest, temperature } = formInput
 
+    // const storyId = uuidv4()
+    // create storyId
 
-    const openAiRequest = { userRequest, temperature: parseFloat(temperature), userId: currentUser?.uid };
+    const openAiRequest = { userRequest, temperature: parseFloat(temperature), userId: currentUser?.uid, storyIdTitle: newStoryId };
 
     setPromptUsed(userRequest)
     setTemperature(parseFloat(temperature))
     setIsLoading(true)
 
     axios.post(baseUrl + "openai", openAiRequest)
-
       .then((response) => {
-
-        setResponseAI(response.data) // need to integrate url
+        setResponseAI(response.data)
         setIsLoading(false)
-
       })
       .catch(error => {
         setIsLoading(false)
@@ -82,28 +72,48 @@ function App(props) {
   const keeper = () => {
     if (!currentUser) return null
 
-    const newStory = {
-      prompt: promptUsed,
-      temperature,
-      image: responseAI[1], // NEED TO UPDATE THIS TO GOOGLE URL 
-      bucketImg: "coming-soon",
-      text: responseAI[2],
-      meta: "meta data tbd",
-      title: "COMING SOON",
-      storyId: thisStoryId,
+    let newStory = {
       userId: currentUser.uid,
       userDisplayName: currentUser?.displayName,
-      userEmail: currentUser?.email
+      userEmail: currentUser?.email,
+      image: responseAI[1], // Use
+      title: "COMING SOON",
+      text: responseAI[2],
+      storyId: newStoryId,
+      prompt: promptUsed,
+      temperature,
     }
 
-    // Create new story with id as title
-    setDoc(doc(db, "users", currentUser.uid, "stories", thisStoryId), newStory)
+    const imageFilePath = "images/USERSET_A_" + currentUser.uid + "/" + newStoryId
 
-    const updatedStoryCollection = currentStoryCollection ? [...currentStoryCollection] : []
+    getDownloadURL(ref(storage, imageFilePath))
+      .then((downloadURL) => {
+        newStory.imageDownloadURL = downloadURL
+        return
+      })
+      .then(() => {
+        return ref(storage, imageFilePath)
 
-    updatedStoryCollection.push(newStory)
-    setCurrentStoryCollection(updatedStoryCollection)
-    setResponseAI(null)
+      }).then((imageDisplayURL) => {
+        newStory.bucketFullPath = imageDisplayURL.fullPath
+      })
+
+      .then(() => {
+
+        // Save story to firestore 
+        setDoc(doc(db, "users", currentUser.uid, "stories", newStoryId), newStory)
+
+          .then(() => {
+            // update local collection display
+            const updatedStoryCollection = currentStoryCollection ? [...currentStoryCollection] : []
+            updatedStoryCollection.push(newStory)
+            setCurrentStoryCollection(updatedStoryCollection)
+            setResponseAI(null)
+            setNewStoryId(uuidv4())
+          })
+
+          .catch((err) => { console.error(err.message) })
+      })
   }
 
   const clearEntry = () => {
@@ -126,6 +136,7 @@ function App(props) {
       <header className="App-header">
         <h1 style={{ margin: "1px", fontSize: "3em", fontFamily: "Garamond" }}>Picture Book</h1>
         <h5>LOGGED IN: {currentUser.email}</h5>
+        <h5>{newStoryId}</h5>
         <Logout color="blue" auth={auth} />
       </header>
 
