@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { collection, getDocs, addDoc, deleteDoc, setDoc, doc, onSnapshot } from "firebase/firestore"
 
+import {
+  deleteObject, ref, getStorage
+} from "firebase/storage";
+
 export default function DisplayFirestoreDocs(props) {
 
   const { db, userId } = props;
@@ -26,9 +30,29 @@ export default function DisplayFirestoreDocs(props) {
   // }, [])
 
   const deleteItem = (item) => {
-    console.log("🍄🍄🍄🍄 item DELETED===>>>", item)
+    console.log("item", item)
+    // FIRESTORE
     const docRef = doc(db, 'users', userId, 'stories', item.id)
     deleteDoc(docRef)
+
+    // STORAGE
+    const storage = getStorage()
+    const desertRef = ref(storage, item.bucketFullPath);
+
+    // storage image
+    deleteObject(desertRef).then(() => {
+
+      console.log("🍄🍄🍄🍄 item DELETED===>>>", item)
+      // Firestore
+      deleteDoc(docRef)
+
+
+    }).catch((err) => {
+      // Uh-oh, an error occurred!
+      console.error(err.message)
+    });
+
+    // aldo delete from storage (not backed up storage)
   }
 
   const savedStoryCollectionDisplay = savedStories && savedStories.map(item => {
