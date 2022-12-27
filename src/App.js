@@ -45,12 +45,9 @@ function App(props) {
     setNewStoryId(uuidv4())
   }, [])
 
-  const onStoryRequestSubmit = formInput => {
+  const submitStoryPrompt = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
     const { userRequest, temperature } = formInput
-
-    // const storyId = uuidv4()
-    // create storyId
 
     const openAiRequest = { userRequest, temperature: parseFloat(temperature), userId: currentUser?.uid, storyIdTitle: newStoryId };
 
@@ -150,7 +147,7 @@ function App(props) {
           style={robotStyle} />
         <h2>Write a story about...</h2>
 
-        <form onStoryRequestSubmit={e => e.preventDefault()}>
+        <form submitStoryPrompt={e => e.preventDefault()}>
           <textarea
             type="text"
             placeholder="GPT-3 question..."
@@ -162,7 +159,7 @@ function App(props) {
             ? <Lottie animationData={loadingAnimation} loop={true} style={robotStyle} />
 
             : <><Button
-              onClick={handleSubmit(onStoryRequestSubmit)}
+              onClick={handleSubmit(submitStoryPrompt)}
               size="huge"
               type="submit"
               inverted color='blue'>Write it!
