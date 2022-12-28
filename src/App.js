@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form'
 import { Button } from 'semantic-ui-react'
 import axios from 'axios'
 import './App.css';
-
 import { setDoc, doc } from "firebase/firestore"
 import { getStorage, ref, getDownloadURL } from "firebase/storage"
 import { ToastContainer, toast } from 'react-toastify';
@@ -26,17 +25,17 @@ function App(props) {
   const [promptUsed, setPromptUsed] = useState(null)
   const [temperature, setTemperature] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [imageUrls, setImageUrls] = useState([])
 
   const { register, handleSubmit, reset } = useForm({}); // errors
   const notify = (message) => toast(message);
   const { db, auth, onAuthStateChanged } = props
   const robotStyle = { height: 200 };
-
   const storage = getStorage();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log("user state changed:", user)
+      console.log("user state changed:", user?.uid)
       setCurrentUser(user)
     })
   }, [])
@@ -44,6 +43,10 @@ function App(props) {
   useEffect(() => {
     setNewStoryId(uuidv4())
   }, [])
+
+  // useEffect(() => {
+  //   console.log("NUMBER" + imageUrls.length)
+  // }, [imageUrls.length])
 
   const submitStoryPrompt = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
@@ -66,6 +69,35 @@ function App(props) {
       });
   };
 
+
+
+  const clearEntry = () => {
+    setResponseAI(null)
+    reset()
+  }
+
+  const newPicture = () => {
+    console.log("NEW PICTURE REQUEST")
+  }
+
+  const newStory = () => {
+    console.log("NEW STORY REQUEST")
+  }
+
+  const deleteImgFromDisplay = (item) => {
+    const newUrlArray = imageUrls.filter(url => url !== item.imageDownloadURL)
+    setImageUrls(newUrlArray)
+  }
+
+  const addItemToDisplay = (newUrl) => {
+    console.log("newUrl", newUrl)
+    const tempUrls = [...imageUrls]
+    tempUrls.push(newUrl)
+    console.log(tempUrls)
+    setImageUrls(tempUrls)
+  }
+
+  // FACTOR OUR TO OWN FILE
   const keeper = () => {
     if (!currentUser) return null
 
@@ -87,6 +119,9 @@ function App(props) {
     getDownloadURL(ref(storage, imageFilePath))
       .then((downloadURL) => {
         newStory.imageDownloadURL = downloadURL
+
+        addItemToDisplay(downloadURL)
+
         return
       })
 
@@ -114,19 +149,6 @@ function App(props) {
       })
   }
 
-  const clearEntry = () => {
-    setResponseAI(null)
-    reset()
-  }
-
-  const newPicture = () => {
-    console.log("NEW PICTURE REQUEST")
-  }
-
-  const newStory = () => {
-    console.log("NEW STORY REQUEST")
-  }
-
   return currentUser ?
 
     <div className="App">
@@ -134,12 +156,20 @@ function App(props) {
       <header className="App-header">
         <h1 style={{ margin: "1px", fontSize: "3em", fontFamily: "Garamond" }}>Picture Book</h1>
         <h5>LOGGED IN: {currentUser.email}</h5>
-        <h5>{newStoryId}</h5>
-        <Logout color="blue" auth={auth} />
+
+        <Logout color="blue"
+          auth={auth}
+          setImageUrls={setImageUrls}
+        />
       </header>
 
       <body>
-        <DisplayFirestoreImages userId={currentUser.uid} />
+        <DisplayFirestoreImages
+          userId={currentUser.uid}
+          imageUrls={imageUrls}
+          setImageUrls={setImageUrls}
+        />
+
         <br />
         <Lottie
           animationData={animatedRobot}
@@ -170,13 +200,16 @@ function App(props) {
 
         {responseAI &&
           <StoryDisplay
+            size="400px"
             responseAI={responseAI}
             keeper={keeper}
             clearEntry={clearEntry}
             newPicture={newPicture}
+
           />}
 
         {currentUser?.uid && <DisplayFirestoreDocs
+          deleteImgFromDisplay={deleteImgFromDisplay}
           db={db}
           userId={currentUser?.uid} />}
 

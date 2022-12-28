@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Container } from 'semantic-ui-react'
 
 export default function StoryDisplay(props) {
-  const { responseAI, keeper, clearEntry, newPicture } = props
+  const { responseAI, keeper, clearEntry, newPicture, size } = props
 
   return (<>
     {responseAI[1] ?
@@ -11,8 +11,8 @@ export default function StoryDisplay(props) {
           src={responseAI[1]}
           onClick={newPicture}
           alt="ai_image"
-          width="350px"
-          height="350px" />
+          width={size}
+          height={size} />
       </div> :
       null}
 

@@ -3,12 +3,20 @@ import { Button } from 'semantic-ui-react'
 import { signOut } from "firebase/auth";
 
 export default function Logout(props) {
-  const { auth, color = "black" } = props
+  const { auth, color = "black", setImageUrls } = props
+
+  const handleClick = () => {
+
+    signOut(auth).then(() => console.log("SIGNOUT")).catch((err) => console.error(err.message))
+
+    setImageUrls([])
+  }
+
   return (
     <Button
       size="mini"
       color={color}
-      onClick={() => signOut(auth).then(() => console.log("SIGNOUT").catch((err => console.error(err.message))))} >
+      onClick={handleClick}>
       Signout
     </Button>
   )

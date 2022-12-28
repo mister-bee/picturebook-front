@@ -7,7 +7,7 @@ import {
 
 export default function DisplayFirestoreDocs(props) {
 
-  const { db, userId } = props;
+  const { db, userId, deleteImgFromDisplay } = props;
   const colRef = collection(db, "users", userId, "stories")
   const [savedStories, setSavedStories] = useState(null)
 
@@ -15,22 +15,16 @@ export default function DisplayFirestoreDocs(props) {
     onSnapshot(colRef, (snapshot) => {
       let dbStories = []
       snapshot.docs.forEach((doc) => { dbStories.push({ ...doc.data(), id: doc.id }) })
-      console.log("dbStories", dbStories)
+      // console.log("dbStories", dbStories)
       setSavedStories(dbStories)
     })
   }, [])
 
-  // useEffect(() => {
-  //   getDocs(colRef).then((snapshot) => {
-  //     let dbStories = []
-  //     snapshot.docs.forEach((doc) => { dbStories.push({ ...doc.data(), id: doc.id }) })
-  //     console.log("dbStories", dbStories)
-  //     setSavedStories(dbStories)
-  //   }).catch(err => { console.log("err", err) })
-  // }, [])
 
   const deleteItem = (item) => {
-    console.log("item", item)
+
+    deleteImgFromDisplay(item)
+
     // FIRESTORE
     const docRef = doc(db, 'users', userId, 'stories', item.id)
     deleteDoc(docRef)
@@ -41,14 +35,12 @@ export default function DisplayFirestoreDocs(props) {
 
     // storage image
     deleteObject(desertRef).then(() => {
+      console.log("🍄🍄🍄🍄 item DELETED for good===>>>", item)
 
-      console.log("🍄🍄🍄🍄 item DELETED===>>>", item)
       // Firestore
       deleteDoc(docRef)
 
-
     }).catch((err) => {
-      // Uh-oh, an error occurred!
       console.error(err.message)
     });
 
@@ -58,12 +50,12 @@ export default function DisplayFirestoreDocs(props) {
   const savedStoryCollectionDisplay = savedStories && savedStories.map(item => {
     return (<>
       <h3 style={{ margin: "3px", color: "Black", cursor: "pointer" }}>     {item.title} </h3>
-      <div><img src={item?.imageDownloadURL} alt="ai_image" width="100px" height="100px" /></div>
-      <h3 style={{ margin: "5px", color: "grey", cursor: "pointer" }}>     {item.text}</h3>
       <div
         onClick={() => deleteItem(item)}
         style={{ cursor: "pointer" }}> ❌
       </div>
+      <div><img src={item?.imageDownloadURL} alt="ai_image" width="100px" height="100px" /></div>
+      <h3 style={{ margin: "5px", color: "grey", cursor: "pointer" }}>     {item.text}</h3>
       <hr />
     </>)
   })
@@ -78,18 +70,12 @@ export default function DisplayFirestoreDocs(props) {
 }
 
 
-{/*   
-    <div
-      style={{
-        width: "60%",
-        height: "auto",
-        margin: "0 auto",
-        position: "relative"}}>
 
-      <div
-        style={{
-          textAlign: "left",
-          width: "100%",
-          borderStyle: "solid",
-          borderWidth: "1px",
-          borderColor: "black"}}> */}
+            // useEffect(() => {
+  //   getDocs(colRef).then((snapshot) => {
+  //     let dbStories = []
+  //     snapshot.docs.forEach((doc) => { dbStories.push({ ...doc.data(), id: doc.id }) })
+  //     console.log("dbStories", dbStories)
+  //     setSavedStories(dbStories)
+  //   }).catch(err => { console.log("err", err) })
+  // }, [])
