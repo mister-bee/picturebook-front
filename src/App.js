@@ -35,13 +35,16 @@ function App(props) {
     })
   }, [])
 
+  if (!currentUser) {
+    return <Login {...props} />
+  }
 
   return (
     <Router>
       <h3>Logged in:{currentUser?.email}</h3>
 
-      {currentUser && <Navigation />}
 
+      <Navigation />
       <Routes>
         <Route path="/" element={<Login auth={auth} />} />
         <Route path="/home" element={<Home auth={auth} />} />
@@ -55,6 +58,8 @@ function App(props) {
         <Route path="*" element={<ErrorPage />} />
         {/* <Route path="/landing" element={<Landing />} /> */}
       </Routes>
+
+
     </Router>
   )
 }

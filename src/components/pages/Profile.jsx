@@ -9,7 +9,7 @@ function Profile() {
 
   useEffect(() => {
     if (!username) {
-      return navigate("/home")
+      return navigate("/")
     }
   }, [])
 
