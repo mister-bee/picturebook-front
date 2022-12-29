@@ -1,15 +1,23 @@
-import React from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import Logout from '../Logout'
+import { useNavigate, useLocation } from 'react-router-dom'
 
-function Home() {
+function Home(props) {
+  const { auth, setImageUrls, currentUser } = props
   let navigate = useNavigate()
-  let { username = "Jerry" } = useParams()
-  return (<>
-    <h1>Home</h1>
-    <button onClick={() => navigate("/profile",
-      { state: { username } }
-    )}>Profile</button>
-  </>
+  let location = useLocation()
+
+  useEffect(() => {
+    if (!currentUser) { return navigate("/") }
+  }, [])
+
+  return (
+    <>
+      <h1>Home Page</h1>
+      <h2>Main page to generate stories</h2>
+      <h2>Small Grid of thumbnails</h2>
+      <Logout {...props} />
+    </>
   )
 }
 

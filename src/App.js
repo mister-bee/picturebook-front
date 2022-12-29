@@ -15,10 +15,10 @@ import ErrorPage from "./components/pages/ErrorPage"
 const Navigation = () => {
   return (
     <nav>
-      <Link to="/">Home </Link>
-      <Link to="/about">About </Link>
+      <Link to="/home">Home </Link>
       <Link to="/profile">Profile </Link>
       <Link to="/stories">Stories </Link>
+      <Link to="/about">About </Link>
     </nav>
   )
 }
@@ -41,20 +41,53 @@ function App(props) {
 
   return (
     <Router>
-      <h3>Logged in:{currentUser?.email}</h3>
-
-
+      <h4>Logged in:{currentUser?.email}</h4>
       <Navigation />
       <Routes>
-        <Route path="/" element={<Login auth={auth} />} />
-        <Route path="/home" element={<Home auth={auth} />} />
-        <Route path="/about" element={<About auth={auth} setImageUrls={setImageUrls} />} />
-        <Route path="/login" element={<Login auth={auth} />} />
-        <Route path="/billing" element={<Billing auth={auth} />} />
-        <Route path="/crypto" element={<Crypto auth={auth} />} />
-        <Route path="/stories" element={<Stories auth={auth} />} />
-        <Route path="/story/:storyid" element={<Story auth={auth} />} />
-        <Route path="/profile" element={<Profile auth={auth} />} />
+        <Route path="/"
+          element={<Login {...props}
+            currentUser={currentUser} />} />
+
+        <Route path="/home"
+          element={<Home {...props}
+            setImageUrls={setImageUrls}
+            currentUser={currentUser} />} />
+
+        <Route path="/about"
+          element={<About {...props}
+            setImageUrls={setImageUrls}
+            currentUser={currentUser} />} />
+
+        <Route path="/login"
+          element={<Login {...props}
+            setImageUrls={setImageUrls}
+            currentUser={currentUser} />} />
+
+        <Route path="/billing"
+          element={<Billing {...props}
+            setImageUrls={setImageUrls}
+            currentUser={currentUser} />} />
+
+        <Route path="/crypto"
+          element={<Crypto {...props}
+            setImageUrls={setImageUrls}
+            currentUser={currentUser} />} />
+
+        <Route path="/stories"
+          element={<Stories {...props}
+            setImageUrls={setImageUrls}
+            currentUser={currentUser} />} />
+
+        <Route path="/story/:storyid"
+          element={<Story {...props}
+            setImageUrls={setImageUrls}
+            currentUser={currentUser} />} />
+
+        <Route path="/profile"
+          element={<Profile {...props}
+            setImageUrls={setImageUrls}
+            currentUser={currentUser} />}
+        />
         <Route path="*" element={<ErrorPage />} />
         {/* <Route path="/landing" element={<Landing />} /> */}
       </Routes>

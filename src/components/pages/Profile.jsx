@@ -1,23 +1,23 @@
 import React, { useEffect } from 'react'
+import Logout from '../Logout'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-function Profile() {
+function Profile(props) {
+  const { auth, setImageUrls, currentUser } = props
   let navigate = useNavigate()
   let location = useLocation()
-  const { state } = location || {}
-  const { username } = state || {}
 
   useEffect(() => {
-    if (!username) {
-      return navigate("/")
-    }
+    if (!currentUser) { return navigate("/") }
   }, [])
 
   return (
     <>
-      <h1>Profile of: {username}</h1>
+      <h1>Profile of: {currentUser?.email}</h1>
+      <Logout {...props} />
     </>
   )
 }
 
 export default Profile
+
