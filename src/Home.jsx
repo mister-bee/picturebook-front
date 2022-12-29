@@ -38,9 +38,6 @@ function App(props) {
   const robotStyle = { height: 200 };
   const storage = getStorage();
 
-
-
-
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       console.log("user state changed:", user?.uid)
@@ -62,9 +59,7 @@ function App(props) {
 
   }, [currentUser])
 
-  // useEffect(() => {
-  //   console.log("NUMBER" + imageUrls.length)
-  // }, [imageUrls.length])
+
 
   const submitStoryPrompt = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL

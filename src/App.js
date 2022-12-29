@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import "./App.css"
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
 
@@ -11,25 +12,46 @@ import Story from "./components/pages/Story"
 import Profile from "./components/pages/Profile"
 import ErrorPage from "./components/pages/ErrorPage"
 
-function App() {
+const Navigation = () => {
+  return (
+    <nav>
+      <Link to="/">Home </Link>
+      <Link to="/about">About </Link>
+      <Link to="/profile">Profile </Link>
+      <Link to="/stories">Stories </Link>
+    </nav>
+  )
+}
+
+function App(props) {
+  const { db, auth, onAuthStateChanged } = props
+  const [currentUser, setCurrentUser] = useState(null)
+  const [imageUrls, setImageUrls] = useState([])
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      console.log("user state changed:", user?.uid)
+      setCurrentUser(user)
+    })
+  }, [])
+
+
   return (
     <Router>
-      <nav>
-        <Link to="/">Home </Link>
-        <Link to="/about">About </Link>
-        <Link to="/profile">Profile </Link>
-        <Link to="/stories">Stories </Link>
-      </nav>
+      <h3>Logged in:{currentUser?.email}</h3>
+
+      {currentUser && <Navigation />}
+
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/billing" element={<Billing />} />
-        <Route path="/crypto" element={<Crypto />} />
-        <Route path="/stories" element={<Stories />} />
-        <Route path="/story/:storyid" element={<Story />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/" element={<Login auth={auth} />} />
+        <Route path="/home" element={<Home auth={auth} />} />
+        <Route path="/about" element={<About auth={auth} setImageUrls={setImageUrls} />} />
+        <Route path="/login" element={<Login auth={auth} />} />
+        <Route path="/billing" element={<Billing auth={auth} />} />
+        <Route path="/crypto" element={<Crypto auth={auth} />} />
+        <Route path="/stories" element={<Stories auth={auth} />} />
+        <Route path="/story/:storyid" element={<Story auth={auth} />} />
+        <Route path="/profile" element={<Profile auth={auth} />} />
         <Route path="*" element={<ErrorPage />} />
         {/* <Route path="/landing" element={<Landing />} /> */}
       </Routes>

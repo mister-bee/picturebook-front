@@ -1,8 +1,12 @@
 import React from 'react'
-
-function About() {
+import Logout from '../Logout'
+function About(props) {
+  const { auth, setImageUrls } = props
   return (
-    <h1>About</h1>
+    <>
+      <h1>About</h1>
+      <Logout auth={auth} color="black" setImageUrls={setImageUrls} />
+    </>
   )
 }
 
