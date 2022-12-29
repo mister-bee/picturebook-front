@@ -1,13 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation, redirect } from 'react-router-dom'
 import { Button } from 'semantic-ui-react'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore"
 
 export default function Login(props) {
-  const { auth, db } = props
+  const { auth, db, currentUser } = props
   const [showSignUp, setShowSignUp] = useState(false)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  let navigate = useNavigate()
+
+  // useEffect(() => {
+  //   if (currentUser) {
+  //     return navigate("/home")
+  //   }
+  // }, [])
+
 
   const handleSignIn = (evt) => {
     evt.preventDefault();
@@ -49,8 +59,10 @@ export default function Login(props) {
 
 
   return (<>
+    {/* <button>TEST</button> */}
     {showSignUp ?
       <> <h1 style={{ color: "orange" }}>New Account</h1>
+
         <form onSubmit={handleSignUp}>
           <h3>
             <label>

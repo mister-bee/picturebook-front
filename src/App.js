@@ -35,55 +35,68 @@ function App(props) {
     })
   }, [])
 
-  if (!currentUser) {
-    return <Login {...props} />
-  }
+  // returing Login no mater what the route
+  // if (!currentUser) {
+  //   return <Login {...props} />
+  // }
 
   return (
+
     <Router>
-      <h4>Logged in:{currentUser?.email}</h4>
-      <Navigation />
+
+      {/* {currentUser && <>
+        <h4>Logged in:{currentUser?.email}</h4>
+        <Navigation />
+      </>} */}
+
+
+      {currentUser ? <>
+        <h4>🍏 Logged in:{currentUser?.email}🍏 </h4>
+        <Navigation /> </> :
+
+        <h2>🍎 LOGGED OUT 🍎</h2>}
+
       <Routes>
         <Route path="/"
           element={<Login {...props}
             currentUser={currentUser} />} />
 
-        <Route path="/home"
+        <Route exact path="/home"
           element={<Home {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser} />} />
 
-        <Route path="/about"
+        <Route exact path="/about"
           element={<About {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser} />} />
 
-        <Route path="/login"
+        <Route exact path="/login"
           element={<Login {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser} />} />
 
-        <Route path="/billing"
+        <Route exact path="/billing"
           element={<Billing {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser} />} />
 
-        <Route path="/crypto"
+        <Route exact path="/crypto"
           element={<Crypto {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser} />} />
 
-        <Route path="/stories"
+        <Route exact path="/stories"
           element={<Stories {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser} />} />
 
-        <Route path="/story/:storyid"
+        <Route exact path="/story/:storyid"
           element={<Story {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser} />} />
 
-        <Route path="/profile"
+        <Route exact path="/profile"
           element={<Profile {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser} />}

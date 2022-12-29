@@ -8,8 +8,13 @@ function Home(props) {
   let location = useLocation()
 
   useEffect(() => {
-    if (!currentUser) { return navigate("/") }
+    if (!currentUser) {
+      console.log("🍇🍇🍇🍇🍇🍇---------- -🍇🍇🍇🍇🍇🍇")
+      return navigate("/")
+    }
   }, [])
+
+  console.log("--->currentUser?.email", currentUser?.email)
 
   return (
     <>

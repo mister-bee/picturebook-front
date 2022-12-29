@@ -10,8 +10,7 @@ export default function Logout(props) {
     setImageUrls([])
   }
 
-  console.log("signOut", signOut)
-  console.log("auth", auth)
+  console.log("LOGOUT - auth", auth)
 
   return (
     <Button
