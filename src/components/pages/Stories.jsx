@@ -2,7 +2,7 @@ import React from 'react'
 
 function Stories() {
   return (
-    <div>Stories</div>
+    <h1>Stories</h1>
   )
 }
 
