@@ -13,6 +13,7 @@ function Profile(props) {
   return (
     <>
       <h1>Profile of: {currentUser?.email}</h1>
+      <h2>Avatars are randomly generated. You can change it by clicking here until you find one your like.</h2>
       <Logout {...props} />
     </>
   )

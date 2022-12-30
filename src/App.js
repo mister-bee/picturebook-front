@@ -11,6 +11,8 @@ import Stories from "./components/pages/Stories"
 import Story from "./components/pages/Story"
 import Profile from "./components/pages/Profile"
 import ErrorPage from "./components/pages/ErrorPage"
+import { createAvatar } from '@dicebear/avatars';
+import * as style from '@dicebear/avatars-bottts-sprites';
 
 const Navigation = () => {
   return (
@@ -19,7 +21,6 @@ const Navigation = () => {
       <NavLink to="/profile">Profile </NavLink>
       <NavLink to="/stories">Stories </NavLink>
       <NavLink to="/about">About </NavLink>
-      <Link to="crypto">Crypto</Link>
     </nav>
   )
 }
@@ -28,6 +29,7 @@ function App(props) {
   const { db, auth, onAuthStateChanged } = props
   const [currentUser, setCurrentUser] = useState(null)
   const [imageUrls, setImageUrls] = useState([])
+  const [avatar, setAvatar] = useState(null)
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -35,6 +37,20 @@ function App(props) {
       setCurrentUser(user)
     })
   }, [])
+
+
+  useEffect(() => {
+    if (currentUser) {
+      let dicebearSVG = createAvatar(style, {
+        seed: currentUser?.uid,
+        dataUri: true,
+        // ... and other options
+      });
+      setAvatar(dicebearSVG)
+    }
+  }, [currentUser])
+
+
 
   return (
     <Router>
@@ -50,42 +66,54 @@ function App(props) {
         <Route exact path="/home"
           element={<Home {...props}
             setImageUrls={setImageUrls}
-            currentUser={currentUser} />} />
+            imageUrls={imageUrls}
+            currentUser={currentUser}
+            avatar={avatar} />} />
 
         <Route exact path="/about"
           element={<About {...props}
             setImageUrls={setImageUrls}
-            currentUser={currentUser} />} />
+            currentUser={currentUser}
+            avatar={avatar} />} />
 
         <Route exact path="/login"
           element={<Login {...props}
             setImageUrls={setImageUrls}
-            currentUser={currentUser} />} />
+            currentUser={currentUser}
+            avatar={avatar} />} />
 
         <Route exact path="/billing"
           element={<Billing {...props}
             setImageUrls={setImageUrls}
-            currentUser={currentUser} />} />
+            currentUser={currentUser}
+            avatar={avatar} />} />
 
         <Route exact path="/crypto"
           element={<Crypto {...props}
             setImageUrls={setImageUrls}
-            currentUser={currentUser} />} />
+            currentUser={currentUser}
+            avatar={avatar} />} />
 
         <Route exact path="/stories"
           element={<Stories {...props}
             setImageUrls={setImageUrls}
-            currentUser={currentUser} />} />
+            imageUrls={imageUrls}
+            currentUser={currentUser}
+            avatar={avatar} />} />
 
         <Route exact path="/story/:storyid"
           element={<Story {...props}
             setImageUrls={setImageUrls}
-            currentUser={currentUser} />} />
+            imageUrls={imageUrls}
+            currentUser={currentUser}
+            avatar={avatar} />} />
 
         <Route exact path="/profile"
           element={<Profile {...props}
             setImageUrls={setImageUrls}
-            currentUser={currentUser} />} />
+            imageUrls={imageUrls}
+            currentUser={currentUser}
+            avatar={avatar} />} />
 
 
         <Route path="*" element={<ErrorPage />} />
