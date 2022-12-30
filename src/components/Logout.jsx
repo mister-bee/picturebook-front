@@ -10,8 +10,6 @@ export default function Logout(props) {
     setImageUrls([])
   }
 
-  console.log("LOGOUT - auth", auth)
-
   return (
     <Button
       size="mini"

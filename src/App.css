@@ -53,3 +53,23 @@ h6 {
 #temp {
   width: 3em;
 }
+
+nav {
+  background: aliceblue;
+  padding: 16px 32px;
+}
+
+nav a {
+  margin-right: 16px;
+}
+
+
+nav a.active {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+label {
+  font-size: 1.5em;
+  font-family: 'Courier New', Courier, monospace
+}

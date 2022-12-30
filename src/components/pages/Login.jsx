@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, redirect } from 'react-router-dom'
+import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom'
 import { Button } from 'semantic-ui-react'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore"
@@ -9,14 +9,7 @@ export default function Login(props) {
   const [showSignUp, setShowSignUp] = useState(false)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  let navigate = useNavigate()
-
-  // useEffect(() => {
-  //   if (currentUser) {
-  //     return navigate("/home")
-  //   }
-  // }, [])
+  const navigate = useNavigate()
 
 
   const handleSignIn = (evt) => {
@@ -57,11 +50,13 @@ export default function Login(props) {
     setShowSignUp(!showSignUp)
   }
 
+  if (currentUser) {
+    return navigate("/home")
+  }
 
   return (<>
-    {/* <button>TEST</button> */}
     {showSignUp ?
-      <> <h1 style={{ color: "orange" }}>New Account</h1>
+      <> <h1 style={{ color: "orange", fontSize: "4em" }}>Create New Account</h1>
 
         <form onSubmit={handleSignUp}>
           <h3>
@@ -72,15 +67,22 @@ export default function Login(props) {
                 value={email}
                 onChange={e => setEmail(e.target.value)} />
             </label>
-            <label>
-              Password
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)} />
-            </label>
             <div>
-              <Button color="black" size="large" type="submit">Create Account</Button>
+              <label>
+                Password
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)} />
+              </label>
+
+            </div>
+            <br />
+            <div>
+              <Button
+                color="orange"
+                size="huge"
+                type="submit">Create Account</Button>
             </div>
           </h3>
 
@@ -88,32 +90,34 @@ export default function Login(props) {
         <br />
         <br />
         <br />
-        <br />
-        <br />
 
-        <Button onClick={() => toggleSignup(false)} color="orange" size="mini">Return to Sign-in</Button>
+        <Button onClick={() => toggleSignup(false)} color="black" size="mini">Return to Sign-in</Button>
       </>
       :
-      <> <h1 style={{ color: "blue" }}>Picture Book Login</h1>
+      <> <h1 style={{ color: "blue", fontSize: "5em" }}  >Picture Book</h1>
         <form onSubmit={handleSignIn}>
 
           <h3>
             <label>
-              Email
+              Email:
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)} />
             </label>
-            <label>
-              Password
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)} />
-            </label>
+
             <div>
-              <Button color="black" type="submit" size="large">Enter</Button>
+              <label>
+                Password:
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)} />
+              </label>
+            </div>
+            <br />
+            <div>
+              <Button color="blue" type="submit" size="huge">Login</Button>
             </div>
           </h3>
         </form>
@@ -123,7 +127,7 @@ export default function Login(props) {
         <br />
         <br />
 
-        <Button onClick={toggleSignup} color="blue" size="mini">Sign up</Button>
+        <Button onClick={toggleSignup} color="black" size="mini">Create Account</Button>
       </>}
     <div>
 

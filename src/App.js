@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import "./App.css"
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route, NavLink, Link } from "react-router-dom"
 
 import Home from "./components/pages/Home"
 import Login from "./components/pages/Login"
@@ -15,10 +15,11 @@ import ErrorPage from "./components/pages/ErrorPage"
 const Navigation = () => {
   return (
     <nav>
-      <Link to="/home">Home </Link>
-      <Link to="/profile">Profile </Link>
-      <Link to="/stories">Stories </Link>
-      <Link to="/about">About </Link>
+      <NavLink to="/home">Home </NavLink>
+      <NavLink to="/profile">Profile </NavLink>
+      <NavLink to="/stories">Stories </NavLink>
+      <NavLink to="/about">About </NavLink>
+      <Link to="crypto">Crypto</Link>
     </nav>
   )
 }
@@ -35,26 +36,11 @@ function App(props) {
     })
   }, [])
 
-  // returing Login no mater what the route
-  // if (!currentUser) {
-  //   return <Login {...props} />
-  // }
-
   return (
-
     <Router>
-
-      {/* {currentUser && <>
-        <h4>Logged in:{currentUser?.email}</h4>
-        <Navigation />
-      </>} */}
-
-
       {currentUser ? <>
         <h4>🍏 Logged in:{currentUser?.email}🍏 </h4>
-        <Navigation /> </> :
-
-        <h2>🍎 LOGGED OUT 🍎</h2>}
+        <Navigation /> </> : null}
 
       <Routes>
         <Route path="/"
@@ -99,10 +85,11 @@ function App(props) {
         <Route exact path="/profile"
           element={<Profile {...props}
             setImageUrls={setImageUrls}
-            currentUser={currentUser} />}
-        />
+            currentUser={currentUser} />} />
+
+
         <Route path="*" element={<ErrorPage />} />
-        {/* <Route path="/landing" element={<Landing />} /> */}
+
       </Routes>
 
 
