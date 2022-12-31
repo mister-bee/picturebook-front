@@ -20,23 +20,28 @@ export default function Login(props) {
 
   const handleSignUp = (evt) => {
     evt.preventDefault();
-    createUserWithEmailAndPassword(auth, email, password).then((cred) => {
-      const userId = cred.user.uid
-      const newUser = {
-        credit: 10,
-        photoURL: cred.user.photoURL,
-        email: cred.user.email,
-        userId,
-        userDisplayName: cred.user.displayName,
-        lalala: "more metadata to come"
-      }
+    createUserWithEmailAndPassword(auth, email, password)
 
-      // set title of user file to userID
-      setDoc(doc(db, "users", userId), newUser)
+      // set to firestore
+      .then((cred) => {
+        const userId = cred.user.uid
 
-    }).catch((err) => {
-      console.error(err.message)
-    })
+        const newUser = {
+          credit: 10,
+          photoURL: cred.user.photoURL,
+          email: cred.user.email,
+          userId,
+          userDisplayName: cred.user.displayName,
+          dateCreated: "coming",
+          googleAuth: false,
+          metadata: null
+        }
+        // set title of user file to userID
+        setDoc(doc(db, "users", userId), newUser)
+
+      }).catch((err) => {
+        console.error(err.message)
+      })
   }
 
   const toggleSignup = () => {

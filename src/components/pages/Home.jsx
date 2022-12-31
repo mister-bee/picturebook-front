@@ -113,9 +113,7 @@ const Home = (props) => {
     getDownloadURL(ref(storage, imageFilePath))
       .then((downloadURL) => {
         newStory.imageDownloadURL = downloadURL
-
         addItemToDisplay(downloadURL)
-
         return
       })
 
@@ -147,6 +145,7 @@ const Home = (props) => {
 
 
   if (!currentUser) {
+    console.log("🍋🍋🍋🍋 -- THIS --- 🍋🍋🍋🍋")
     return navigate("/")
   }
 

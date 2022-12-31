@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { collection, getDocs, addDoc, deleteDoc, setDoc, doc, onSnapshot } from "firebase/firestore"
 
-import {
-  deleteObject, ref, getStorage
-} from "firebase/storage";
+import { deleteObject, ref, getStorage } from "firebase/storage";
 
 export default function DisplayFirestoreDocs(props) {
 
@@ -15,7 +13,6 @@ export default function DisplayFirestoreDocs(props) {
     onSnapshot(colRef, (snapshot) => {
       let dbStories = []
       snapshot.docs.forEach((doc) => { dbStories.push({ ...doc.data(), id: doc.id }) })
-      // console.log("dbStories", dbStories)
       setSavedStories(dbStories)
     })
   }, [])

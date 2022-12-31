@@ -34,7 +34,7 @@ function App(props) {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      console.log("user state changed:", user?.uid)
+      //console.log("user state changed:", user?.uid)
       setCurrentUser(user)
     })
   }, [])
