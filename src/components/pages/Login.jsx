@@ -12,10 +12,8 @@ export default function Login(props) {
   const [password, setPassword] = useState("");
   const navigate = useNavigate()
 
-
   const handleSignIn = (evt) => {
     evt.preventDefault();
-    // setEmailAndPassword({ email, password })
     signInWithEmailAndPassword(auth, email, password).then((cred) => {
     }).catch((err => console.error(err.message)))
   }
@@ -23,11 +21,7 @@ export default function Login(props) {
   const handleSignUp = (evt) => {
     evt.preventDefault();
     createUserWithEmailAndPassword(auth, email, password).then((cred) => {
-
-      // ------------------------------------
-
       const userId = cred.user.uid
-
       const newUser = {
         credit: 10,
         photoURL: cred.user.photoURL,
@@ -126,13 +120,13 @@ export default function Login(props) {
         <br />
         <br />
         <br />
-        <br />
 
         <Button onClick={toggleSignup} color="black" size="mini">Create Account</Button>
       </>}
     <div>
 
     </div>
+    <Button onClick={() => navigate('logingoogle')}>Google Login</Button>
   </>
   );
 }
