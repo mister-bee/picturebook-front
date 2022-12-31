@@ -2,16 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-// import App from './Home';
-
-// ---- refactor into firebase.js -----
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import {
-  getFirestore
-  //collection, getDocs, addDoc, deleteDoc, doc, onSnapshot 
-} from "firebase/firestore"
+import { getFirestore } from "firebase/firestore"
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 

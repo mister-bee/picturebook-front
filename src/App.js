@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, NavLink, Link } from "react-rou
 
 import Home from "./components/pages/Home"
 import Login from "./components/pages/Login"
+import LoginGoogle from "./components/pages/LoginGoogle"
 import About from "./components/pages/About"
 import Billing from "./components/pages/Billing"
 import Crypto from "./components/pages/Crypto"
@@ -78,6 +79,12 @@ function App(props) {
 
         <Route exact path="/login"
           element={<Login {...props}
+            setImageUrls={setImageUrls}
+            currentUser={currentUser}
+            avatar={avatar} />} />
+
+        <Route exact path="/logingoogle"
+          element={<LoginGoogle {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser}
             avatar={avatar} />} />
