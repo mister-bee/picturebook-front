@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { setDoc, doc, getDoc } from "firebase/firestore"
+import { setDoc, doc, getDoc, updateDoc } from "firebase/firestore"
 const provider = new GoogleAuthProvider();
 
 export default function LoginGoogle(props) {
@@ -11,9 +11,9 @@ export default function LoginGoogle(props) {
 
 
   useEffect(() => {
+
     console.log("00000000")
     signInWithPopup(auth, provider)
-
       .then((result) => {
         console.log("1111111")
         const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -22,9 +22,7 @@ export default function LoginGoogle(props) {
       })
 
       .then((googleUser) => {
-
         console.log("2222222===>>>>", googleUser)
-
 
         // Check if user exists in firestore
         const userId = googleUser.uid
@@ -32,20 +30,31 @@ export default function LoginGoogle(props) {
 
         getDoc(docRef).then((res) => {
           const currentFirebaseUser = res.data()
-          console.log("33333333 =====currentFirebaseUser==>", currentFirebaseUser)
 
-          return { user: googleUser, isNewUser: !currentFirebaseUser }
+
+          console.log("33333333 ===== numberOfLogins ==>", currentFirebaseUser)
+
+          let incrementedLogins = 9999
+
+          if (!!currentFirebaseUser) {
+            incrementedLogins = currentFirebaseUser.numberOfLogins + 1
+          }
+
+          return { user: googleUser, isNewUser: !currentFirebaseUser, docRef, incrementedLogins }
+
+
+
 
         })
 
-          .then(({ user, isNewUser }) => {
+          .then(({ user, isNewUser, docRef, incrementedLogins }) => {
 
-            console.log("444444 ==>>>>", user)
             console.log("isNewUser ==>>>>", isNewUser)
 
             if (isNewUser) {
-              const userId = user.uid
+              console.log("444444 NEW USER: CREATE ACCOUNT ==>>>>", user)
 
+              const userId = user.uid
               const newUser = {
                 credit: 10,
                 photoURL: user.photoURL,
@@ -54,14 +63,21 @@ export default function LoginGoogle(props) {
                 userDisplayName: user.displayName,
                 dateCreated: "currently in metatag1",
                 googleAuth: true,
-                metadata: "user.metadata3"
+                metadata: "user.metadata3",
+                numberOfLogins: 1
               }
+              setDoc(doc(db, "users", userId), newUser) // then?
 
-              console.log("user=====>>>>", user)
-              console.log("db=====>>>>", db)
-              console.log("newUser=====>>>>", newUser)
+            } else {
 
-              setDoc(doc(db, "users", userId), newUser)
+              console.log("444444 CURRENT USER: UPDATE ACCOUNT ==>>>>", user)
+              console.log(docRef)
+              const dataToUpdate = { numberOfLogins: incrementedLogins } // get old record and increase
+
+              updateDoc(docRef, dataToUpdate) // then ?
+
+              //const docRef = doc(db, "cities", "yftq9RGp4jWNSyBZ1D6L");
+
             }
 
             // need access token?
