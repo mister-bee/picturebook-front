@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'semantic-ui-react'
-import { setDoc, doc } from "firebase/firestore"
+import { setDoc, doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore"
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
@@ -12,9 +12,36 @@ export default function Login(props) {
   const [password, setPassword] = useState("");
   const navigate = useNavigate()
 
+  const standardStartingCredit = 10
+
+
   const handleSignIn = (evt) => {
     evt.preventDefault();
     signInWithEmailAndPassword(auth, email, password).then((cred) => {
+      // 2  UPDATE DOC
+      const userId = cred.user.uid
+      const docRef = doc(db, "users", userId);
+
+      getDoc(docRef).then((res) => {
+        const currentFirebaseUser = res.data()
+
+        return { userId, docRef, currentFirebaseUser }
+      })
+
+        .then(({ userId, docRef, currentFirebaseUser }) => {
+
+          const dataToUpdate = {
+            numberOfLogins: currentFirebaseUser.numberOfLogins + 1,
+            dateLastLoggedIn: serverTimestamp()
+          }
+
+          console.log("dataToUpdate", dataToUpdate)
+          console.log("userId", userId)
+
+          updateDoc(docRef, dataToUpdate)
+
+        })
+
     }).catch((err => console.error(err.message)))
   }
 
@@ -23,19 +50,25 @@ export default function Login(props) {
     createUserWithEmailAndPassword(auth, email, password)
 
       // set to firestore
+      // #1 - check this
       .then((cred) => {
+
         const userId = cred.user.uid
 
         const newUser = {
-          credit: 10,
+          credit: standardStartingCredit,
           photoURL: cred.user.photoURL,
           email: cred.user.email,
           userId,
           userDisplayName: cred.user.displayName,
-          dateCreated: "coming",
           googleAuth: false,
-          metadata: null
+          numberOfLogins: 1,
+          dateCreated: serverTimestamp(),
+          dateLastLoggedIn: serverTimestamp(),
         }
+
+
+
         // set title of user file to userID
         setDoc(doc(db, "users", userId), newUser)
 
