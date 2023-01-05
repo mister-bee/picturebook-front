@@ -77,6 +77,11 @@ export default function LoginGoogle(props) {
   }, [])
 
 
+  // google.accounts.id.renderButton(
+  //   document.getElementById("buttonDiv"),
+  //   { theme: "outline", size: "large" }  // customization attributes
+  // );
+
 
   return (
     <div>LoginGoogle</div>

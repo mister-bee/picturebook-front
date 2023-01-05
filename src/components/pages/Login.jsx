@@ -4,6 +4,8 @@ import { Button } from 'semantic-ui-react'
 import { setDoc, doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore"
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import GoogleButton from 'react-google-button'
+
 
 export default function Login(props) {
   const { auth, db, currentUser } = props
@@ -164,7 +166,8 @@ export default function Login(props) {
     <div>
 
     </div>
-    <Button onClick={() => navigate('logingoogle')}>Google Login</Button>
+    <GoogleButton onClick={() => navigate('logingoogle')} />
+
   </>
   );
 }
