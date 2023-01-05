@@ -12,8 +12,9 @@ export default function Login(props) {
   const [showSignUp, setShowSignUp] = useState(false)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate()
+  const [showEmailUI, setShowEmailUI] = useState(false)
 
+  const navigate = useNavigate()
   const standardStartingCredit = 10
 
 
@@ -69,14 +70,20 @@ export default function Login(props) {
           dateLastLoggedIn: serverTimestamp(),
         }
 
-
-
         // set title of user file to userID
         setDoc(doc(db, "users", userId), newUser)
 
       }).catch((err) => {
         console.error(err.message)
       })
+  }
+
+  const toggleMain = () => {
+    setShowEmailUI(!showEmailUI)
+    console.log(showEmailUI)
+    // setEmail("")
+    // setPassword("")
+    // setShowSignUp(!showSignUp)
   }
 
   const toggleSignup = () => {
@@ -90,6 +97,7 @@ export default function Login(props) {
   }
 
   return (<>
+
     {showSignUp ?
       <> <h1 style={{ color: "orange", fontSize: "4em" }}>Create New Account</h1>
 
@@ -122,9 +130,7 @@ export default function Login(props) {
           </h3>
 
         </form>
-        <br />
-        <br />
-        <br />
+
 
         <Button onClick={() => toggleSignup(false)} color="black" size="mini">Return to Sign-in</Button>
       </>
@@ -156,16 +162,17 @@ export default function Login(props) {
             </div>
           </h3>
         </form>
-        <br />
-        <br />
-        <br />
-        <br />
+
 
         <Button onClick={toggleSignup} color="black" size="mini">Create Account</Button>
       </>}
     <div>
 
     </div>
+    <br />
+    <br />
+    <br />
+    <Button onClick={toggleMain} color="red">Email and Password</Button>
     <GoogleButton onClick={() => navigate('logingoogle')} />
 
   </>

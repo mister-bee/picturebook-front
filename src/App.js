@@ -3,7 +3,7 @@ import "./App.css"
 import { BrowserRouter as Router, Routes, Route, NavLink, Link } from "react-router-dom"
 
 import Home from "./components/pages/Home"
-import Login from "./components/pages/Login"
+import LoginMain from "./components/pages/LoginMain"
 import LoginGoogle from "./components/pages/LoginGoogle"
 import About from "./components/pages/About"
 import Billing from "./components/pages/Billing"
@@ -61,7 +61,7 @@ function App(props) {
 
       <Routes>
         <Route path="/"
-          element={<Login {...props}
+          element={<LoginMain {...props}
             currentUser={currentUser} />} />
 
         <Route exact path="/home"
@@ -78,7 +78,7 @@ function App(props) {
             avatar={avatar} />} />
 
         <Route exact path="/login"
-          element={<Login {...props}
+          element={<LoginMain {...props}
             setImageUrls={setImageUrls}
             currentUser={currentUser}
             avatar={avatar} />} />
