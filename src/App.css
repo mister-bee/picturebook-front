@@ -38,6 +38,22 @@
   }
 }
 
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: cornflowerblue;
+  font-size: .7em;
+  margin: "2px 2px 2px 2px "
+}
+
 h5 {
   color: cornflowerblue;
   font-size: .7em;

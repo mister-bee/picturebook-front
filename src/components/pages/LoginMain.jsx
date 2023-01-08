@@ -1,180 +1,50 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'semantic-ui-react'
-import { setDoc, doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore"
-
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import GoogleButton from 'react-google-button'
-
+import LoginEmail from './LoginEmail.jsx'
+import LoginSignupEmail from './LoginSignupEmail.jsx'
 
 export default function Login(props) {
-  const { auth, db, currentUser } = props
-  const [showSignUp, setShowSignUp] = useState(false)
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { currentUser } = props
+  const [showSignUp, setShowSignUp] = useState("hello-user")
   const [showEmailUI, setShowEmailUI] = useState(false)
-
   const navigate = useNavigate()
-  const standardStartingCredit = 10
+  const toggleMain = () => setShowEmailUI(!showEmailUI)
 
+  if (currentUser) return navigate("/home")
 
-  const handleSignIn = (evt) => {
-    evt.preventDefault();
-    signInWithEmailAndPassword(auth, email, password).then((cred) => {
-      // 2  UPDATE DOC
-      const userId = cred.user.uid
-      const docRef = doc(db, "users", userId);
-
-      getDoc(docRef).then((res) => {
-        const currentFirebaseUser = res.data()
-
-        return { userId, docRef, currentFirebaseUser }
-      })
-
-        .then(({ userId, docRef, currentFirebaseUser }) => {
-
-          const dataToUpdate = {
-            numberOfLogins: currentFirebaseUser.numberOfLogins + 1,
-            dateLastLoggedIn: serverTimestamp()
-          }
-
-          console.log("dataToUpdate", dataToUpdate)
-          console.log("userId", userId)
-
-          updateDoc(docRef, dataToUpdate)
-
-        })
-
-    }).catch((err => console.error(err.message)))
-  }
-
-  const handleSignUp = (evt) => {
-    evt.preventDefault();
-    createUserWithEmailAndPassword(auth, email, password)
-
-      // set to firestore
-      // #1 - check this
-      .then((cred) => {
-
-        const userId = cred.user.uid
-
-        const newUser = {
-          credit: standardStartingCredit,
-          photoURL: cred.user.photoURL,
-          email: cred.user.email,
-          userId,
-          userDisplayName: cred.user.displayName,
-          googleAuth: false,
-          numberOfLogins: 1,
-          dateCreated: serverTimestamp(),
-          dateLastLoggedIn: serverTimestamp(),
-        }
-
-        // set title of user file to userID
-        setDoc(doc(db, "users", userId), newUser)
-
-      }).catch((err) => {
-        console.error(err.message)
-      })
-  }
-
-  const toggleMain = () => {
-    setShowEmailUI(!showEmailUI)
-    console.log(showEmailUI)
-    // setEmail("")
-    // setPassword("")
-    // setShowSignUp(!showSignUp)
-  }
-
-  const toggleSignup = () => {
-    setEmail("")
-    setPassword("")
-    setShowSignUp(!showSignUp)
-  }
-
-  if (currentUser) {
-    return navigate("/home")
-  }
+  // const styleCenter = {
+  //   display: 'flex',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // }
 
   return (<>
+    <h1 style={{ color: "blue", fontSize: "5em" }} >Picture Book</h1>
+    <h1 style={{ fontSize: "15em" }}>🥑</h1 >
 
-    {showSignUp ?
-      <> <h1 style={{ color: "orange", fontSize: "4em" }}>Create New Account</h1>
+    <div className="center">
+      {!showEmailUI && <Button onClick={toggleMain} size="huge" color="black">Email and Password</Button>}
+    </div>
+    <br />
+    {
+      showEmailUI
+        ? <>
+          {showSignUp
+            ? <LoginEmail setShowSignUp={setShowSignUp} {...props} />
+            : <LoginSignupEmail setShowSignUp={setShowSignUp} {...props} />
+          }
+        </>
+        : null
+    }
 
-        <form onSubmit={handleSignUp}>
-          <h3>
-            <label>
-              Email
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)} />
-            </label>
-            <div>
-              <label>
-                Password
-                <input
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)} />
-              </label>
-
-            </div>
-            <br />
-            <div>
-              <Button
-                color="orange"
-                size="huge"
-                type="submit">Create Account</Button>
-            </div>
-          </h3>
-
-        </form>
-
-
-        <Button onClick={() => toggleSignup(false)} color="black" size="mini">Return to Sign-in</Button>
-      </>
-      :
-      <> <h1 style={{ color: "blue", fontSize: "5em" }}  >Picture Book</h1>
-        <form onSubmit={handleSignIn}>
-
-          <h3>
-            <label>
-              Email:
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)} />
-            </label>
-
-            <div>
-              <label>
-                Password:
-                <input
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)} />
-              </label>
-            </div>
-            <br />
-            <div>
-              <Button color="blue" type="submit" size="huge">Login</Button>
-            </div>
-          </h3>
-        </form>
-
-
-        <Button onClick={toggleSignup} color="black" size="mini">Create Account</Button>
-      </>}
-    <div>
-
+    <div className="center">
+      {!showEmailUI && <GoogleButton onClick={() => navigate('logingoogle')} />}
     </div>
     <br />
     <br />
-    <br />
-    <Button onClick={toggleMain} color="red">Email and Password</Button>
-    <GoogleButton onClick={() => navigate('logingoogle')} />
-
   </>
+
   );
 }
