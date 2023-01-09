@@ -1,6 +1,6 @@
 import React from 'react'
 import Logout from '../Logout'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button } from 'semantic-ui-react'
@@ -14,7 +14,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import loadingAnimation from '../../images/loading-animation.json';
 import animatedRobot from '../../images/99973-little-power-robot.json';
 import CurrentStoryDisplay from '../../components/CurrentStoryDisplay';
-import DisplayFirestoreDocs from '../../components/DisplayFirestoreDocs';
 import DisplayFirestoreImages from '../../components/DisplayFirestoreImages';
 
 // import { createAvatar } from '@dicebear/avatars';
@@ -38,9 +37,7 @@ const Home = (props) => {
   const storage = getStorage();
 
 
-  useEffect(() => {
-    setNewStoryId(uuidv4())
-  }, [])
+  useEffect(() => { setNewStoryId(uuidv4()) }, [])
 
   const submitStoryPrompt = formInput => {
     const baseUrl = process.env.REACT_APP_API_URL
@@ -64,7 +61,6 @@ const Home = (props) => {
   };
 
 
-
   const clearEntry = () => {
     setResponseAI(null)
     reset()
@@ -84,10 +80,10 @@ const Home = (props) => {
   }
 
   const addItemToDisplay = (newUrl) => {
-    console.log("newUrl", newUrl)
+    // console.log("newUrl", newUrl)
     const tempUrls = [...imageUrls]
     tempUrls.push(newUrl)
-    console.log(tempUrls)
+    // console.log(tempUrls)
     setImageUrls(tempUrls)
   }
 
@@ -136,18 +132,17 @@ const Home = (props) => {
             setCurrentStoryCollection(updatedStoryCollection)
             setResponseAI(null)
             setNewStoryId(uuidv4())
+            successfullySave("Story Saved!")
           })
           .catch((err) => { console.error(err.message) })
       })
   }
 
-
-
-
-  if (!currentUser) {
-    console.log("🍋🍋🍋🍋 -- THIS --- 🍋🍋🍋🍋")
-    return navigate("/")
+  const successfullySave = (message) => {
+    notify(message)
   }
+
+  if (!currentUser) return navigate("/")
 
   return (
     <>
@@ -207,23 +202,10 @@ const Home = (props) => {
               keeper={keeper}
               clearEntry={clearEntry}
               newPicture={newPicture}
-
             />}
-
-          {currentUser?.uid && <DisplayFirestoreDocs
-            deleteImgFromDisplay={deleteImgFromDisplay}
-            db={db}
-            userId={currentUser?.uid} />}
 
         </body>
       </div >
-
-
-
-      <h1>Home Page</h1>
-      <h2>Main page to generate stories</h2>
-      <h2>Small Grid of thumbnails</h2>
-      <Logout {...props} />
     </>
   )
 }

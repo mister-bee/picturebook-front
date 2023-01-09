@@ -1,21 +1,36 @@
 import React from 'react'
 import Logout from '../Logout'
 import { useNavigate } from 'react-router-dom'
+import DisplayFirestoreDocs from '../../components/DisplayFirestoreDocs';
+import DisplayFirestoreImages from '../../components/DisplayFirestoreImages';
 
 function Stories(props) {
-  const { auth, setImageUrls, currentUser } = props
-
-
+  const { currentUser, db, imageUrls, setImageUrls } = props
   let navigate = useNavigate()
-  if (!currentUser) {
-    return navigate("/")
+
+  const deleteImgFromDisplay = (item) => {
+    const newUrlArray = imageUrls.filter(url => url !== item.imageDownloadURL)
+    setImageUrls(newUrlArray)
   }
+
+  if (!currentUser) return navigate("/")
 
   return (
     <>
-      <h1>Stories Page</h1>
-      <h2>All stories</h2>
-      <h2>THUMBNAIL / Title / Date / Exp / Link to story page</h2>
+      <h1 style={{}}>Stories Page</h1>
+
+      <DisplayFirestoreImages
+        userId={currentUser.uid}
+        imageUrls={imageUrls}
+        setImageUrls={setImageUrls}
+      />
+
+      <DisplayFirestoreDocs
+        deleteImgFromDisplay={deleteImgFromDisplay}
+        db={db}
+        userId={currentUser?.uid}
+      />
+
       <Logout {...props} />
     </>
   )
