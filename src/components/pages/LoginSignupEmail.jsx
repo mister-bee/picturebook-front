@@ -3,9 +3,8 @@ import { Button } from 'semantic-ui-react'
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore"
 
-
 export default function LoginSignupEmail(props) {
-  const { auth, db, currentUser, setShowSignUp } = props
+  const { auth, db, currentUser, setShowSignUp, showErrorDisplay } = props
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
@@ -15,11 +14,8 @@ export default function LoginSignupEmail(props) {
     createUserWithEmailAndPassword(auth, email, password)
 
       // set to firestore
-      // #1 - check this
       .then((cred) => {
-
         const userId = cred.user.uid
-
         const newUser = {
           credit: standardStartingCredit,
           photoURL: cred.user.photoURL,
@@ -36,7 +32,7 @@ export default function LoginSignupEmail(props) {
         setDoc(doc(db, "users", userId), newUser)
 
       }).catch((err) => {
-        console.error(err.message)
+        showErrorDisplay(err.message)
       })
   }
 
@@ -44,8 +40,6 @@ export default function LoginSignupEmail(props) {
     <h1 style={{ color: "orange", fontSize: "4em" }}>Create New Account</h1>
 
     <div className="center">
-
-
       <form onSubmit={handleSignUp}>
         <h3>
           <label>
@@ -63,7 +57,6 @@ export default function LoginSignupEmail(props) {
                 value={password}
                 onChange={e => setPassword(e.target.value)} />
             </label>
-
           </div>
           <br />
           <div className="center">
@@ -73,15 +66,11 @@ export default function LoginSignupEmail(props) {
               type="submit">Create Account</Button>
           </div>
         </h3>
-
       </form>
     </div>
     <div className="center">
-
       <Button onClick={() => setShowSignUp(true)} color="black" size="mini">Return to Sign-in</Button>
     </div>
   </>
-
-
   )
 }

@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { setDoc, doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore"
+import { ToastContainer, toast } from 'react-toastify';
+
 const provider = new GoogleAuthProvider();
 
 export default function LoginGoogle(props) {
@@ -9,6 +11,17 @@ export default function LoginGoogle(props) {
   const navigate = useNavigate()
   const { db } = props
   const standardStartingCredit = 10
+
+  const showErrorDisplay = (message) => toast.error(message, {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    draggable: true,
+    theme: "light",
+    onClose: () => navigate("/home")
+  });
+
 
   useEffect(() => {
 
@@ -50,7 +63,8 @@ export default function LoginGoogle(props) {
                 dateLastLoggedIn: serverTimestamp(),
               }
 
-              setDoc(doc(db, "users", userId), newUser) // then navigate("/home")
+              setDoc(doc(db, "users", userId), newUser)
+              // then navigate("/home")?
 
             } else {
               const dataToUpdate = {
@@ -72,49 +86,14 @@ export default function LoginGoogle(props) {
         const errorMessage = error.message;
         const credential = GoogleAuthProvider.credentialFromError(error);
         console.log("errorMessage", errorMessage)
+        showErrorDisplay(error.message)
+
       });
 
   }, [])
 
 
-  // google.accounts.id.renderButton(
-  //   document.getElementById("buttonDiv"),
-  //   { theme: "outline", size: "large" }  // customization attributes
-  // );
-
-
-  return (
-    <div>LoginGoogle</div>
-  )
+  return <ToastContainer />
 }
 
 
-
-/*     .then((googleUser) => {
-      // Check if user exists in firestore
-      const userId = googleUser.uid
-      const docRef = doc(db, "users", userId);
- 
-      console.log("22222222")
- 
-      getDoc(docRef).then((res) => {
-        const currentFirebaseUser = res.data()
- 
-        // if (currentFirebaseUser) {
-        //   console.log("🍒🍒🍒 CURRENT USER 🍒🍒🍒")
-        //   return navigate("/home")
-        //   //return navigate("/home")
-        // } else {
- 
-        //   console.log("🫒 🫒 🫒 CREATE FIRESTORE NEW FIRESTORE 🫒 🫒 🫒")
-        //   return googleUser
-        //     .then(() => {
-        //       console.log("THIS WAY")
-        //     })
-        // }
- 
-        // return currentFirebaseUser
-        return googleUser
- 
-      })
- */

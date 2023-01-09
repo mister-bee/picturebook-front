@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore"
 
 export default function LoginEmail(props) {
-  const { auth, db, currentUser, setShowSignUp } = props
+  const { auth, db, currentUser, showErrorDisplay, setShowSignUp } = props
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -34,7 +34,10 @@ export default function LoginEmail(props) {
           updateDoc(docRef, dataToUpdate)
         })
 
-    }).catch((err => console.error(err.message)))
+    })
+      .catch((err => {
+        showErrorDisplay(err.message)
+      }))
   }
 
   return (

@@ -6,6 +6,7 @@ import GoogleButton from 'react-google-button'
 import LoginEmail from './LoginEmail.jsx'
 import LoginSignupEmail from './LoginSignupEmail.jsx'
 import artGraphic from '../../images/71308-artificial-intelligence-lottie-animation.json'
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function Login(props) {
   const { currentUser } = props
@@ -14,13 +15,22 @@ export default function Login(props) {
   const navigate = useNavigate()
   const toggleMain = () => setShowEmailUI(!showEmailUI)
 
+  const showErrorDisplay = (message) => toast.error(message, {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    draggable: true,
+    theme: "light"
+  });
+
   if (currentUser) return navigate("/home")
 
   return (<>
     <h1 style={{ color: "blue", fontSize: "5em" }} >Picture Book!</h1>
-
+    <ToastContainer />
     <Lottie
-      style={{ height: 400 }}
+      style={{ height: 300 }}
       animationData={artGraphic}
       loop={false} />
     <br />
@@ -31,8 +41,14 @@ export default function Login(props) {
     {showEmailUI
       ? <>
         {showSignUp
-          ? <LoginEmail setShowSignUp={setShowSignUp} {...props} />
-          : <LoginSignupEmail setShowSignUp={setShowSignUp} {...props} />
+          ? <LoginEmail
+            showErrorDisplay={showErrorDisplay}
+            setShowSignUp={setShowSignUp}
+            {...props} />
+          : <LoginSignupEmail
+            setShowSignUp={setShowSignUp}
+            showErrorDisplay={showErrorDisplay}
+            {...props} />
         }
       </>
       : null
