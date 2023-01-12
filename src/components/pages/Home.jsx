@@ -1,9 +1,9 @@
 import React from 'react'
-import Logout from '../Logout'
+// import Logout from '../Logout'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Button } from 'semantic-ui-react'
+import { Button, Container } from 'semantic-ui-react'
 import axios from 'axios'
 import { setDoc, doc } from "firebase/firestore"
 import { getStorage, ref, getDownloadURL } from "firebase/storage"
@@ -21,7 +21,6 @@ import DisplayFirestoreImages from '../../components/DisplayFirestoreImages';
 
 const Home = (props) => {
   const { auth, db, imageUrls, setImageUrls, currentUser, onAuthStateChanged, avatar } = props
-
 
   let navigate = useNavigate()
 
@@ -95,12 +94,12 @@ const Home = (props) => {
       userId: currentUser.uid,
       userDisplayName: currentUser?.displayName,
       userEmail: currentUser?.email,
-      image: responseAI[1], // Use
-      title: "COMING SOON",
+      title: responseAI[0],
       text: responseAI[2],
+      image: responseAI[1],
       storyId: newStoryId,
       prompt: promptUsed,
-      temperature,
+      temperature
     }
 
     const suffixId = "_picturebook_DEC2022.png"
@@ -145,26 +144,16 @@ const Home = (props) => {
   if (!currentUser) return navigate("/")
 
   return (
-    <>
+    <Container>
       <div className="App">
         <ToastContainer />
-        <header className="App-header">
-          <h1 style={{ margin: "1px", fontSize: "3em", fontFamily: "Garamond" }}>Picture Book</h1>
-          <img src={avatar} height="40px" width="40px" alt="user-avatar" />
-          <h5 style={{ margin: "2px 0px 5px 0px" }}>LOGGED IN: {currentUser.email}</h5>
-
-          <Logout color="blue"
-            auth={auth}
-            setImageUrls={setImageUrls}
-          />
-          <br />
-        </header>
-
         <body>
+          {/* <h1 style={{ margin: "1px", fontSize: "3em", fontFamily: "Garamond" }}>Picture Book</h1> */}
           <DisplayFirestoreImages
             userId={currentUser.uid}
             imageUrls={imageUrls}
             setImageUrls={setImageUrls}
+            size={"50px"}
           />
 
           <br />
@@ -206,7 +195,7 @@ const Home = (props) => {
 
         </body>
       </div >
-    </>
+    </Container>
   )
 }
 

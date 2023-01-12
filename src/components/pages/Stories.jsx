@@ -1,6 +1,6 @@
 import React from 'react'
-import Logout from '../Logout'
 import { useNavigate } from 'react-router-dom'
+import { Container } from 'semantic-ui-react'
 import DisplayFirestoreDocs from '../../components/DisplayFirestoreDocs';
 import DisplayFirestoreImages from '../../components/DisplayFirestoreImages';
 
@@ -17,21 +17,21 @@ function Stories(props) {
 
   return (
     <>
-      <h1 style={{}}>Stories Page</h1>
+      <Container>
+        <h1 style={{}}>Stories Page</h1>
 
-      <DisplayFirestoreImages
-        userId={currentUser.uid}
-        imageUrls={imageUrls}
-        setImageUrls={setImageUrls}
-      />
+        <DisplayFirestoreImages
+          userId={currentUser.uid}
+          imageUrls={imageUrls}
+          setImageUrls={setImageUrls}
+        />
 
-      <DisplayFirestoreDocs
-        deleteImgFromDisplay={deleteImgFromDisplay}
-        db={db}
-        userId={currentUser?.uid}
-      />
-
-      <Logout {...props} />
+        <DisplayFirestoreDocs
+          deleteImgFromDisplay={deleteImgFromDisplay}
+          db={db}
+          userId={currentUser?.uid}
+        />
+      </Container>
     </>
   )
 }

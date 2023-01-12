@@ -27,8 +27,9 @@ export default function Login(props) {
   if (currentUser) return navigate("/home")
 
   return (<>
-    <h1 style={{ color: "blue", fontSize: "5em" }} >Picture Book!</h1>
     <ToastContainer />
+    <h1 style={{ color: "blue", fontSize: "6em" }} >Picture Book</h1>
+    <h5 className="center">Bringing imagination to life with personalized illustrated short stories for children.</h5>
     <Lottie
       style={{ height: 300 }}
       animationData={artGraphic}

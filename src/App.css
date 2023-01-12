@@ -51,12 +51,19 @@ h1 {
   justify-content: center;
   color: cornflowerblue;
   font-size: 5em;
+  margin: "2px 2px 2px 2px ";
+  font-family: 'Courier New', Courier, monospace
+}
+
+h2 {
+  color: cornflowerblue;
+  font-size: 2em;
   margin: "2px 2px 2px 2px "
 }
 
 h5 {
   color: cornflowerblue;
-  font-size: .7em;
+  font-size: 1.5em;
   margin: "2px 2px 2px 2px "
 }
 

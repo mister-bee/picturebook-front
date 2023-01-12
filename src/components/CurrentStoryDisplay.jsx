@@ -17,7 +17,8 @@ export default function StoryDisplay(props) {
       null}
 
     <Container text>
-      <h2>{responseAI[2]}</h2>
+      <h2>{responseAI[0]}</h2>
+      <h5>{responseAI[2]}</h5>
     </Container>
 
     <Button onClick={keeper} color="green">Keeper</Button>

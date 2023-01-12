@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Container } from 'semantic-ui-react'
 import "./App.css"
 import { BrowserRouter as Router, Routes, Route, NavLink, Link } from "react-router-dom"
 
@@ -55,8 +56,19 @@ function App(props) {
   return (
     <Router>
       {currentUser ? <>
-        <h4>🍏 Logged in:{currentUser?.email}🍏 </h4>
-        <Navigation /> </> : null}
+        <Container>
+
+          <header className="App-header">
+            <h1 style={{ margin: "1px", fontSize: "3em", fontFamily: "Garamond" }}>Picture Book</h1>
+            {/* <img src={avatar} height="40px" width="40px" alt="user-avatar" /> */}
+            {/* <h6 style={{ margin: "2px 0px 5px 0px", color: "white" }}>LOGGED IN: {currentUser.email}</h6> */}
+
+          </header>
+
+          <Navigation />
+          <h4 style={{ margin: "2px 0px 0px 5px" }}>Logged in: {currentUser?.email} </h4>
+        </Container>
+      </> : null}
 
       <Routes>
         <Route path="/"
